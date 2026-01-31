@@ -536,10 +536,24 @@ This project is in the **Public Domain** - Government of India
 
 ## 🌐 Languages Supported
 
-- 🇬🇧 English
-- 🇮🇳 हिंदी (Hindi)
+**13 Major Indian Languages Fully Integrated:**
 
-*More languages coming soon!*
+1. 🇬🇧 **English** - Default
+2. 🇮🇳 **हिन्दी (Hindi)** - 528M speakers
+3. 🇮🇳 **தமிழ் (Tamil)** - 81M speakers
+4. 🇮🇳 **తెలుగు (Telugu)** - 93M speakers
+5. 🇮🇳 **ಕನ್ನಡ (Kannada)** - 56M speakers
+6. 🇮🇳 **മലയാളം (Malayalam)** - 38M speakers
+7. 🇮🇳 **বাংলা (Bengali)** - 265M speakers
+8. 🇮🇳 **मराठी (Marathi)** - 90M speakers
+9. 🇮🇳 **ગુજરાતી (Gujarati)** - 60M speakers
+10. 🇮🇳 **ਪੰਜਾਬੀ (Punjabi)** - 33M speakers
+11. 🇮🇳 **اردو (Urdu)** - 68M speakers
+12. 🇮🇳 **ଓଡ଼ିଆ (Odia)** - 38M speakers
+13. 🇮🇳 **অসমীয়া (Assamese)** - 15M speakers
+
+**Coverage**: 1.3+ billion Indians can use in their native language!  
+**See**: [LANGUAGES.md](LANGUAGES.md) for complete documentation
 
 ---
 
