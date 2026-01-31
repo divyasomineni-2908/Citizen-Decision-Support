@@ -103,25 +103,26 @@ const App: React.FC = () => {
             ))}
         </select>
       </div>
-      <main className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto flex-grow w-full">
-        {renderView()}
-      </main>
-      <Footer language={language} />
-      
-      {/* Notification Center */}
-      <NotificationCenter language={language} />
-      
-      {/* Voice Assistant */}
-      <VoiceAssistant 
-        language={language} 
-        onCommand={(command) => console.log('Voice command:', command)} 
-      />
-      
-      {/* Text-to-Speech */}
-      <TextToSpeech language={language} />
-      
-      {/* Chatbot Button */}
-      <div className="fixed bottom-6 right-6 z-50">
+      <>
+        <main className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto flex-grow w-full">
+          {renderView()}
+        </main>
+        <Footer language={language} />
+        
+        {/* Notification Center */}
+        <NotificationCenter language={language} />
+        
+        {/* Voice Assistant */}
+        <VoiceAssistant 
+          language={language} 
+          onCommand={(command) => console.log('Voice command:', command)} 
+        />
+        
+        {/* Text-to-Speech */}
+        <TextToSpeech language={language} />
+        
+        {/* Chatbot Button */}
+        <div className="fixed bottom-6 right-6 z-50">
         <button
           onClick={() => setChatbotOpen(!isChatbotOpen)}
           className="bg-primary text-white p-4 rounded-full shadow-lg hover:bg-blue-700 transition-transform transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
@@ -129,8 +130,9 @@ const App: React.FC = () => {
         >
           <ChatIcon className="h-8 w-8" />
         </button>
-      </div>
-      {isChatbotOpen && <Chatbot setIsOpen={setChatbotOpen} language={language} />}
+        </div>
+        {isChatbotOpen && <Chatbot setIsOpen={setChatbotOpen} language={language} />}
+      </>
     </div>
   );
 };
