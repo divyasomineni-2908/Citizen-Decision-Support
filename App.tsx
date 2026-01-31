@@ -8,6 +8,15 @@ import Profile from './components/Dashboard';
 import Transparency from './components/Transparency';
 import Grievance from './components/Grievance';
 import Chatbot from './components/Chatbot';
+import DocumentVault from './components/DocumentVault';
+import ApplicationStatusTracking from './components/ApplicationStatusTracking';
+import SchemeComparison from './components/SchemeComparison';
+import AnalyticsDashboard from './components/AnalyticsDashboard';
+import FAQSection from './components/FAQSection';
+import VideoTutorials from './components/VideoTutorials';
+import VoiceAssistant from './components/VoiceAssistant';
+import TextToSpeech from './components/TextToSpeech';
+import NotificationCenter from './components/NotificationCenter';
 import { ChatIcon } from './components/Icons';
 import { View, Scheme } from './types';
 import { EXPANDED_MOCK_SCHEMES } from './constants';
@@ -17,6 +26,7 @@ const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<View>(View.HOME);
   const [isChatbotOpen, setChatbotOpen] = useState<boolean>(false);
   const [language, setLanguage] = useState('English');
+  const [darkMode, setDarkMode] = useState<boolean>(false);
   const [schemes, setSchemes] = useState<Scheme[]>(
     EXPANDED_MOCK_SCHEMES.map(scheme => ({ ...scheme, isFavorite: false }))
   );
@@ -43,22 +53,46 @@ const App: React.FC = () => {
         return <Transparency language={language}/>;
       case View.GRIEVANCE:
         return <Grievance language={language}/>;
+      case View.DOCUMENTS:
+        return <DocumentVault language={language}/>;
+      case View.TRACKING:
+        return <ApplicationStatusTracking language={language}/>;
+      case View.COMPARISON:
+        return <SchemeComparison schemes={schemes} language={language}/>;
+      case View.ANALYTICS:
+        return <AnalyticsDashboard schemes={schemes} language={language}/>;
+      case View.FAQ:
+        return <FAQSection language={language}/>;
+      case View.TUTORIALS:
+        return <VideoTutorials language={language}/>;
       default:
         return <Home setCurrentView={setCurrentView} language={language} />;
     }
-  }, [currentView, schemes, language]);
+  }, [currentView, schemes, language, darkMode]);
 
   return (
-    <div className="min-h-screen bg-gray-50 font-sans text-dark flex flex-col">
+    <div className={`min-h-screen font-sans flex flex-col ${darkMode ? 'bg-gray-900 text-gray-100' : 'bg-gray-50 text-dark'}`}>
       <Header 
         currentView={currentView} 
         setCurrentView={setCurrentView}
         language={language}
+        darkMode={darkMode}
       />
-      <div className="fixed top-20 right-4 sm:right-6 lg:right-8 z-40">
+        <button
+          onClick={() => setDarkMode(!darkMode)}
+          className={`px-3 py-2 rounded-md shadow-lg transition-colors ${
+            darkMode ? 'bg-gray-700 text-yellow-400' : 'bg-white text-gray-700'
+          }`}
+          aria-label="Toggle dark mode"
+        >
+          {darkMode ? '☀️' : '🌙'}
+        </button>
         <select
             value={language}
             onChange={(e) => setLanguage(e.target.value)}
+            className={`block w-full pl-3 pr-10 py-2 text-base focus:outline-none focus:ring-primary focus:border-primary sm:text-sm rounded-md shadow-lg ${
+              darkMode ? 'bg-gray-700 text-gray-100 border-gray-600' : 'bg-white text-gray-900 border-gray-300'
+            }`}
             className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm rounded-md bg-white shadow-lg"
             aria-label="Select language"
         >
@@ -73,6 +107,20 @@ const App: React.FC = () => {
         {renderView()}
       </main>
       <Footer language={language} />
+      
+      {/* Notification Center */}
+      <NotificationCenter language={language} />
+      
+      {/* Voice Assistant */}
+      <VoiceAssistant 
+        language={language} 
+        onCommand={(command) => console.log('Voice command:', command)} 
+      />
+      
+      {/* Text-to-Speech */}
+      <TextToSpeech language={language} />
+      
+      {/* Chatbot Button */}
       <div className="fixed bottom-6 right-6 z-50">
         <button
           onClick={() => setChatbotOpen(!isChatbotOpen)}
