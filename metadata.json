@@ -1,0 +1,7 @@
+{
+  "name": "GovWelfare Connect",
+  "description": "A transparent, inclusive, and citizen-friendly governance platform that increases welfare participation and trust using modern web technologies.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
