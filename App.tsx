@@ -19,7 +19,7 @@ import TextToSpeech from './components/TextToSpeech';
 import NotificationCenter from './components/NotificationCenter';
 import { ChatIcon } from './components/Icons';
 import { View, Scheme } from './types';
-import { EXPANDED_MOCK_SCHEMES } from './constants';
+import { MOCK_SCHEMES, MOCK_APPLICATIONS } from './constants';
 import { languages } from './services/translations';
 
 const App: React.FC = () => {
@@ -28,7 +28,7 @@ const App: React.FC = () => {
   const [language, setLanguage] = useState('English');
   const [darkMode, setDarkMode] = useState<boolean>(false);
   const [schemes, setSchemes] = useState<Scheme[]>(
-    EXPANDED_MOCK_SCHEMES.map(scheme => ({ ...scheme, isFavorite: false }))
+    MOCK_SCHEMES.map(scheme => ({ ...scheme, isFavorite: false }))
   );
 
   const handleToggleFavorite = (schemeId: string) => {
@@ -78,6 +78,7 @@ const App: React.FC = () => {
         language={language}
         darkMode={darkMode}
       />
+      <div className="flex gap-2 p-4">
         <button
           onClick={() => setDarkMode(!darkMode)}
           className={`px-3 py-2 rounded-md shadow-lg transition-colors ${
@@ -90,10 +91,9 @@ const App: React.FC = () => {
         <select
             value={language}
             onChange={(e) => setLanguage(e.target.value)}
-            className={`block w-full pl-3 pr-10 py-2 text-base focus:outline-none focus:ring-primary focus:border-primary sm:text-sm rounded-md shadow-lg ${
+            className={`block w-40 pl-3 pr-10 py-2 text-base focus:outline-none focus:ring-primary focus:border-primary sm:text-sm rounded-md shadow-lg ${
               darkMode ? 'bg-gray-700 text-gray-100 border-gray-600' : 'bg-white text-gray-900 border-gray-300'
             }`}
-            className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm rounded-md bg-white shadow-lg"
             aria-label="Select language"
         >
             {languages.map((lang) => (
@@ -103,26 +103,26 @@ const App: React.FC = () => {
             ))}
         </select>
       </div>
-      <>
-        <main className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto flex-grow w-full">
-          {renderView()}
-        </main>
-        <Footer language={language} />
-        
-        {/* Notification Center */}
-        <NotificationCenter language={language} />
-        
-        {/* Voice Assistant */}
-        <VoiceAssistant 
-          language={language} 
-          onCommand={(command) => console.log('Voice command:', command)} 
-        />
-        
-        {/* Text-to-Speech */}
-        <TextToSpeech language={language} />
-        
-        {/* Chatbot Button */}
-        <div className="fixed bottom-6 right-6 z-50">
+
+      <main className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto flex-grow w-full">
+        {renderView()}
+      </main>
+      <Footer language={language} />
+      
+      {/* Notification Center */}
+      <NotificationCenter language={language} />
+      
+      {/* Voice Assistant */}
+      <VoiceAssistant 
+        language={language} 
+        onCommand={(command) => console.log('Voice command:', command)} 
+      />
+      
+      {/* Text-to-Speech */}
+      <TextToSpeech language={language} />
+      
+      {/* Chatbot Button */}
+      <div className="fixed bottom-6 right-6 z-50">
         <button
           onClick={() => setChatbotOpen(!isChatbotOpen)}
           className="bg-primary text-white p-4 rounded-full shadow-lg hover:bg-blue-700 transition-transform transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
@@ -130,9 +130,8 @@ const App: React.FC = () => {
         >
           <ChatIcon className="h-8 w-8" />
         </button>
-        </div>
-        {isChatbotOpen && <Chatbot setIsOpen={setChatbotOpen} language={language} />}
-      </>
+      </div>
+      {isChatbotOpen && <Chatbot setIsOpen={setChatbotOpen} language={language} />}
     </div>
   );
 };
