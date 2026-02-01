@@ -22,6 +22,7 @@ import { View, Scheme, UserProfile, Application, Document } from './types';
 import { MOCK_SCHEMES, MOCK_APPLICATIONS, MOCK_USER_PROFILE, MOCK_DOCUMENTS } from './constants';
 import { getTranslator, languages, translations } from './services/translations';
 import { translateText } from './services/geminiService';
+import AdminDashboard from './components/AdminDashboard';
 
 const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<View>(View.HOME);
@@ -58,6 +59,13 @@ const App: React.FC = () => {
       )
     );
   };
+
+  // Simple mock routing for Admin
+  useEffect(() => {
+    if (window.location.pathname === '/admin') {
+      setCurrentView(View.ADMIN);
+    }
+  }, []);
 
   useEffect(() => {
     let isMounted = true;
@@ -204,84 +212,75 @@ const App: React.FC = () => {
         return <FAQSection language={language} />;
       case View.TUTORIALS:
         return <VideoTutorials language={language} />;
-        import AdminDashboard from './components/AdminDashboard';
-...
-    useEffect(() => {
-      // Simple mock routing for Admin
-      if (window.location.pathname === '/admin') {
-        setCurrentView(View.ADMIN);
-      }
-    }, []);
-...
       case View.ADMIN:
-return <AdminDashboard language={language} />;
+        return <AdminDashboard language={language} />;
       default:
-return <Home setCurrentView={setCurrentView} language={language} />;
+        return <Home setCurrentView={setCurrentView} language={language} />;
     }
   }, [currentView, schemes, schemesToRender, language, darkMode, userProfile]);
 
-return (
-  <div className={`min-h-screen font-sans flex flex-col ${darkMode ? 'bg-gray-900 text-gray-100' : 'bg-gray-50 text-dark'}`}>
-    <Header
-      currentView={currentView}
-      setCurrentView={setCurrentView}
-      language={language}
-      darkMode={darkMode}
-    />
-    <div className="flex gap-2 p-4">
-      <button
-        onClick={() => setDarkMode(!darkMode)}
-        className={`px-3 py-2 rounded-md shadow-lg transition-colors ${darkMode ? 'bg-gray-700 text-yellow-400' : 'bg-white text-gray-700'
-          }`}
-        aria-label="Toggle dark mode"
-      >
-        {darkMode ? '☀️' : '🌙'}
-      </button>
-      <select
-        value={language}
-        onChange={(e) => setLanguage(e.target.value)}
-        className={`block w-40 pl-3 pr-10 py-2 text-base focus:outline-none focus:ring-primary focus:border-primary sm:text-sm rounded-md shadow-lg ${darkMode ? 'bg-gray-700 text-gray-100 border-gray-600' : 'bg-white text-gray-900 border-gray-300'
-          }`}
-        aria-label="Select language"
-      >
-        {languages.map((lang) => (
-          <option key={lang.value} value={lang.value}>
-            {lang.label}
-          </option>
-        ))}
-      </select>
+  return (
+    <div className={`min-h-screen font-sans flex flex-col ${darkMode ? 'bg-gray-900 text-gray-100' : 'bg-gray-50 text-dark'}`}>
+      <Header
+        currentView={currentView}
+        setCurrentView={setCurrentView}
+        language={language}
+        darkMode={darkMode}
+      />
+      <div className="flex gap-2 p-4">
+        <button
+          onClick={() => setDarkMode(!darkMode)}
+          className={`px-3 py-2 rounded-md shadow-lg transition-colors ${darkMode ? 'bg-gray-700 text-yellow-400' : 'bg-white text-gray-700'
+            }`}
+          aria-label="Toggle dark mode"
+        >
+          {darkMode ? '☀️' : '🌙'}
+        </button>
+        <select
+          value={language}
+          onChange={(e) => setLanguage(e.target.value)}
+          className={`block w-40 pl-3 pr-10 py-2 text-base focus:outline-none focus:ring-primary focus:border-primary sm:text-sm rounded-md shadow-lg ${darkMode ? 'bg-gray-700 text-gray-100 border-gray-600' : 'bg-white text-gray-900 border-gray-300'
+            }`}
+          aria-label="Select language"
+        >
+          {languages.map((lang) => (
+            <option key={lang.value} value={lang.value}>
+              {lang.label}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <main className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto flex-grow w-full">
+        {renderView()}
+      </main>
+      <Footer language={language} />
+
+      {/* Notification Center */}
+      <NotificationCenter language={language} />
+
+      {/* Voice Assistant */}
+      <VoiceAssistant
+        language={language}
+        onCommand={(command) => console.log('Voice command:', command)}
+      />
+
+      {/* Text-to-Speech */}
+      <TextToSpeech language={language} />
+
+      {/* Chatbot Button */}
+      <div className="fixed bottom-6 right-6 z-50">
+        <button
+          onClick={() => setChatbotOpen(!isChatbotOpen)}
+          className="bg-primary text-white p-4 rounded-full shadow-lg hover:bg-blue-700 transition-transform transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+          aria-label="Toggle Chatbot"
+        >
+          <ChatIcon className="h-8 w-8" />
+        </button>
+      </div>
+      {isChatbotOpen && <Chatbot setIsOpen={setChatbotOpen} language={language} />}
     </div>
-
-    <main className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto flex-grow w-full">
-      {renderView()}
-    </main>
-    <Footer language={language} />
-
-    {/* Notification Center */}
-    <NotificationCenter language={language} />
-
-    {/* Voice Assistant */}
-    <VoiceAssistant
-      language={language}
-      onCommand={(command) => console.log('Voice command:', command)}
-    />
-
-    {/* Text-to-Speech */}
-    <TextToSpeech language={language} />
-
-    {/* Chatbot Button */}
-    <div className="fixed bottom-6 right-6 z-50">
-      <button
-        onClick={() => setChatbotOpen(!isChatbotOpen)}
-        className="bg-primary text-white p-4 rounded-full shadow-lg hover:bg-blue-700 transition-transform transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
-        aria-label="Toggle Chatbot"
-      >
-        <ChatIcon className="h-8 w-8" />
-      </button>
-    </div>
-    {isChatbotOpen && <Chatbot setIsOpen={setChatbotOpen} language={language} />}
-  </div>
-);
+  );
 };
 
 export default App;
