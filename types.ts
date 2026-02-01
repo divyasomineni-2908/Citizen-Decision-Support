@@ -1,36 +1,55 @@
 
 export interface Scheme {
-  id: string;
-  title: string;
-  department: string;
-  description: string;
-  category: string;
-  benefits: string[];
-  eligibility: {
-    minAge?: number;
-    maxAge?: number;
-    minIncome?: number;
-    maxIncome?: number;
-    state?: string;
-    category?: 'SC' | 'ST' | 'OBC' | 'General' | 'EWS';
-    gender?: 'Male' | 'Female' | 'Any';
-    residence?: 'Rural' | 'Urban' | 'Any';
-    isForStudents?: boolean;
-    isForPwD?: boolean; // Person with Disability
-  };
-  applicationProcess: string[];
-  applicationLink: string;
-  isFavorite?: boolean;
-  matchScore?: number;
+    id: string;
+    title: string;
+    department: string;
+    description: string;
+    category: string;
+    benefits: string[];
+    eligibility: {
+        minAge?: number;
+        maxAge?: number;
+        minIncome?: number;
+        maxIncome?: number;
+        state?: string;
+        category?: 'SC' | 'ST' | 'OBC' | 'General' | 'EWS';
+        gender?: 'Male' | 'Female' | 'Any';
+        residence?: 'Rural' | 'Urban' | 'Any';
+        isForStudents?: boolean;
+        isForPwD?: boolean; // Person with Disability
+    };
+    applicationProcess: string[];
+    applicationLink: string;
+    isFavorite?: boolean;
+    matchScore?: number;
 }
 
 export interface Application {
-    id: string;
+    id: string; // Internal ID
+    applicationId: string; // Official Display ID (e.g. PMK2026...)
     schemeId: string;
     schemeTitle: string;
     submissionDate: string;
-    status: 'Submitted' | 'In Review' | 'Approved' | 'Rejected';
+    lastUpdate?: string;
+    status: 'Submitted' | 'Under Review' | 'Documents Verified' | 'Approved' | 'Rejected' | 'Disbursed' | 'In Review'; // Combined statuses
     details: string;
+    timeline?: {
+        stage: string;
+        date: string;
+        completed: boolean;
+    }[];
+    nextAction?: string;
+    officerName?: string;
+    officerContact?: string;
+}
+
+export interface Document {
+    id: string;
+    name: string;
+    type: string;
+    size: number;
+    uploadDate: string;
+    category: 'Identity' | 'Income' | 'Residence' | 'Other';
 }
 
 export enum View {
@@ -45,7 +64,8 @@ export enum View {
     COMPARISON = 'COMPARISON',
     ANALYTICS = 'ANALYTICS',
     FAQ = 'FAQ',
-    TUTORIALS = 'TUTORIALS'
+    TUTORIALS = 'TUTORIALS',
+    ADMIN = 'ADMIN'
 }
 
 export interface ChatMessage {

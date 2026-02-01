@@ -95,7 +95,7 @@ export const translations = {
     ineligibleCardAIExplanation: { English: 'AI-Powered Explanation', Hindi: 'एआई-संचालित स्पष्टीकरण', Tamil: 'AI-இயங்கும் விளக்கம்', Bengali: 'এআই-চালিত ব্যাখ্যা', Marathi: 'एआय-चालित स्पष्टीकरण', Telugu: 'AI-ఆధారిత వివరణ', Gujarati: 'AI-સંચાલિત સમજૂતી', Urdu: 'AI سے چلنے والی وضاحت', Kannada: 'AI-ಚಾಲಿತ ವಿವರಣೆ', Odia: 'AI- ଚାଳିତ ବ୍ୟାଖ୍ୟା |', Malayalam: 'AI- പവർഡ് വിശദീകരണം', Punjabi: 'AI- ਸੰਚਾਲਿਤ ਵਿਆਖਿਆ', Assamese: 'AI-চালিত ব্যাখ্যা' },
     ineligibleCardHowToBecomeEligible: { English: 'How to Become Eligible', Hindi: 'पात्र कैसे बनें', Tamil: 'தகுதி பெறுவது எப்படி', Bengali: 'কীভাবে যোগ্য হবেন', Marathi: 'पात्र कसे व्हावे', Telugu: 'అర్హత పొందడం ఎలా', Gujarati: 'પાત્ર કેવી રીતે બનવું', Urdu: 'اہل کیسے بنیں', Kannada: 'ಅರ್ಹರಾಗುವುದು ಹೇಗೆ', Odia: 'କିପରି ଯୋଗ୍ୟ ହେବେ |', Malayalam: 'എങ്ങനെ യോഗ്യനാകാം', Punjabi: 'ਯੋਗ ਕਿਵੇਂ ਬਣਨਾ ਹੈ', Assamese: 'যোগ্য কেনেকৈ হ’ব' },
     ineligibleCardAlternativeSchemes: { English: 'Alternative Schemes', Hindi: 'वैकल्पिक योजनाएं', Tamil: 'மாற்றுத் திட்டங்கள்', Bengali: 'বিকল্প স্কিম', Marathi: 'पर्यायी योजना', Telugu: 'ప్రత్యామ్నాయ పథకాలు', Gujarati: 'વૈકલ્પિક યોજનાઓ', Urdu: 'متبادل اسکیمیں', Kannada: 'ಪರ್ಯಾಯ ಯೋಜನೆಗಳು', Odia: 'ବিকল্প ଯୋଜନା |', Malayalam: 'εναλλακτικές പദ്ധതികൾ', Punjabi: 'ਵਿਕਲਪਕ ਸਕੀਮਾਂ', Assamese: 'বিকল্প আঁচনিসমূহ' },
-    
+
     // Grievance Page
     grievanceTitle: { English: 'Grievance Redressal', Hindi: 'शिकायत निवारण', Tamil: 'குறை தீர்க்கும்', Bengali: 'অভিযোগ নিষ্পত্তি', Marathi: 'तक्रार निवारण', Telugu: 'ఫిర్యాదుల పరిష్కారం', Gujarati: 'ફરિયાદ નિવારણ', Urdu: 'شکایت کا ازالہ', Kannada: 'ಕುಂದುಕೊರತೆ ನಿವಾರಣೆ', Odia: 'ଅଭିଯୋଗ ସମାଧାନ', Malayalam: 'പരാതി പരിഹാരം', Punjabi: 'ਸ਼ਿਕਾਇਤ ਨਿਵਾਰਣ', Assamese: 'অভিযোগ নিষ্পত্তি' },
     grievanceSubtitle: { English: 'Submit your feedback, complaints, or queries regarding any scheme or application.', Hindi: 'किसी भी योजना या आवेदन के संबंध में अपनी प्रतिक्रिया, शिकायतें या प्रश्न प्रस्तुत करें।', Tamil: 'எந்தவொரு திட்டம் அல்லது விண்ணப்பம் தொடர்பான உங்கள் கருத்து, புகார்கள் அல்லது கேள்விகளைச் சமர்ப்பிக்கவும்.', Bengali: 'যেকোনো স্কিম বা আবেদন সংক্রান্ত আপনার মতামত, অভিযোগ বা প্রশ্ন জমা দিন।', Marathi: 'कोणत्याही योजनेबद्दल किंवा अर्जाबद्दल तुमचा अभिप्राय, तक्रारी किंवा প্রশ্ন सबमिट करा.', Telugu: 'ఏదైనా పథకం లేదా అప్లికేషన్‌కు సంబంధించి మీ అభిప్రాయం, ఫిర్యాదులు లేదా ప్రశ్నలను సమర్పించండి.', Gujarati: 'કોઈપણ યોજના અથવા અરજી સંબંધિત તમારો પ્રતિસાદ, ફરિયાદો અથવા પ્રશ્નો સબમિટ કરો.', Urdu: 'کسی بھی اسکیم یا درخواست کے بارے میں اپنی رائے، شکایات، یا سوالات جمع کروائیں۔', Kannada: 'ಯಾವುದೇ ಯೋಜನೆ ಅಥವಾ ಅಪ್ಲಿಕೇಶನ್‌ಗೆ ಸಂಬಂಧಿಸಿದಂತೆ ನಿಮ್ಮ ಪ್ರತಿಕ್ರಿಯೆ, ದೂರುಗಳು ಅಥವಾ ಪ್ರಶ್ನೆಗಳನ್ನು ಸಲ್ಲಿಸಿ.', Odia: 'ଯେକୌଣସି ଯୋଜନା କିମ୍ବା ଆବେਦନ ସମ୍ବନ୍ଧରେ ଆପଣଙ୍କର ମତାମତ, ଅଭିଯୋଗ, କିମ୍ବା ପ୍ରଶ୍ନ ଦାଖଲ କରନ୍ତୁ |', Malayalam: 'ഏതെങ്കിലും സ്കീം അല്ലെങ്കിൽ ആപ്ലിക്കേഷനെക്കുറിച്ചുള്ള നിങ്ങളുടെ ഫീഡ്‌ബാക്ക്, പരാതികൾ അല്ലെങ്കിൽ ചോദ്യങ്ങൾ സമർപ്പിക്കുക.', Punjabi: 'ਕਿਸੇ ਵੀ ਸਕੀਮ ਜਾਂ ਐਪਲੀਕੇਸ਼ਨ ਬਾਰੇ ਆਪਣੀ ਫੀਡਬੈਕ, ਸ਼ਿਕਾਇਤਾਂ, ਜਾਂ ਸਵਾਲ ਦਰਜ ਕਰੋ।', Assamese: 'যিকোনো আঁচনি বা আবেদন সংক্ৰান্তত আপোনাৰ মতামত, অভিযোগ, বা প্ৰש্ন দাখিল কৰক।' },
@@ -134,7 +134,7 @@ export const translations = {
     addAppSaveBtn: { English: 'Save Application', Hindi: 'आवेदन सहेजें', Tamil: 'விண்ணப்பத்தைச் சேமி', Bengali: 'আবেদন সংরক্ষণ করুন', Marathi: 'अर्ज जतन करा', Telugu: 'అప్లి케షన్‌ను సేవ్ చేయండి', Gujarati: 'એપ્લિકેશન સાચવો', Urdu: 'درخواست محفوظ کریں۔', Kannada: 'ಅಪ್ಲಿಕೇಶನ್ ಉಳಿಸಿ', Odia: 'ଆବେਦନ ସଂରକ୍ଷଣ କରନ୍ତୁ |', Malayalam: 'അപേക്ഷ സംരക്ഷിക്കുക', Punjabi: 'ਐਪਲੀਕੇਸ਼ਨ ਸੁਰੱਖਿਅਤ ਕਰੋ', Assamese: 'आवेदन সংৰক্ষণ কৰক' },
     statusNew: { English: 'NEW', Hindi: 'नया', Tamil: 'புதிய', Bengali: 'নতুন', Marathi: 'नवीन', Telugu: 'కొత్త', Gujarati: 'નવું', Urdu: 'نیا', Kannada: 'ಹೊಸದು', Odia: 'ନୂତନ', Malayalam: 'പുതിയത്', Punjabi: 'ਨਵਾਂ', Assamese: 'নতুন' },
     commonClose: { English: 'Close', Hindi: 'बंद करें', Tamil: 'மூடு', Bengali: 'বন্ধ করুন', Marathi: 'बंद करा', Telugu: 'మూసివేయండి', Gujarati: 'બંધ કરો', Urdu: 'بند کریں', Kannada: 'ಮುಚ್ಚಿ', Odia: 'ବନ୍ଦ କରନ୍ତୁ |', Malayalam: 'അടയ്‌ക്കുക', Punjabi: 'ਬੰਦ ਕਰੋ', Assamese: 'বন্ধ কৰক' },
-    
+
     // Chatbot
     chatbotTitle: { English: 'Welfare Assistant', Hindi: 'कल्याण सहायक', Tamil: 'நலன்புரி உதவியாளர்', Bengali: 'কল্যাণ সহকারী', Marathi: 'कल्याण सहाय्यक', Telugu: 'సంక్షేమ సహాయకుడు', Gujarati: 'કલ્યાણ સહાયક', Urdu: 'ویلفیئر اسسٹنٹ', Kannada: 'ಕಲ್ಯಾಣ ಸಹಾಯಕ', Odia: 'କଲ୍ୟାଣ ସହାୟକ |', Malayalam: 'ക്ഷേമ സഹായി', Punjabi: 'ਭਲਾਈ ਸਹਾਇਕ', Assamese: 'কল্যাণ সহায়ক' },
     chatbotPlaceholder: { English: 'Ask a question...', Hindi: 'एक सवाल पूछें...', Tamil: 'ஒரு கேள்வியைக் கேட்கவும்', Bengali: 'একটি প্রশ্ন জিজ্ঞাসা করুন...', Marathi: 'प्रश्न विचारा...', Telugu: 'ఒక ప్రశ్న అడగండి...', Gujarati: 'એક પ્રશ્ન પૂછો...', Urdu: 'ایک سوال پوچھیں...', Kannada: 'ಒಂದು ಪ್ರಶ್ನೆ ಕೇಳಿ...', Odia: 'ଏକ ପ୍ରଶ୍ନ ପଚାରନ୍ତୁ ...', Malayalam: 'ഒരു ചോദ്യം ചോഴിക്കൂ...', Punjabi: 'ਇੱਕ ਸਵਾਲ ਪੁੱਛੋ...', Assamese: 'এটা প্ৰশ্ন সোধক...' },
@@ -152,6 +152,20 @@ export const translations = {
     'mid-day-meal': { English: 'Mid-Day Meal Scheme', Hindi: 'मध्याह्न भोजन योजना', Tamil: 'மதிய உணவு திட்டம்' },
     'pm-mudra': { English: 'Pradhan Mantri MUDRA Yojana (PMMY)', Hindi: 'प्रधानमंत्री मुद्रा योजना (पीएमएमवाई)', Tamil: 'பிரதம மந்திரி முத்ரா யோஜனா (PMMY)' },
     'stand-up-india': { English: 'Stand-Up India Scheme', Hindi: 'स्टैंड-अप इंडिया योजना', Tamil: 'ஸ்டாண்ட்-அப் இந்தியா திட்டம்' },
+
+    // Categories
+    catAgriculture: { English: 'Agriculture', Hindi: 'कृषि', Tamil: 'வேளாண்மை', Bengali: 'কৃষি', Marathi: 'शेती', Telugu: 'వ్యవసాయం', Gujarati: 'ખેતી', Kannada: 'ಕೃಷಿ', Malayalam: 'കൃഷി' },
+    catEducation: { English: 'Education', Hindi: 'शिक्षा', Tamil: 'கல்வி', Bengali: 'শিক্ষা', Marathi: 'शिक्षण', Telugu: 'విద్య', Gujarati: 'શિક્ષણ', Kannada: 'ಶಿಕ್ಷಣ', Malayalam: 'വിദ്യാഭ്യാസം' },
+    catHealthcare: { English: 'Healthcare', Hindi: 'स्वास्थ्य सेवा', Tamil: 'சுகாதாரம்', Bengali: 'স্বাস্থ্যসেবা', Marathi: 'आरोग्यसेवा', Telugu: 'ఆరోగ్య సంరక్షణ', Gujarati: 'આરોગ્ય સંભાળ', Kannada: 'ಆರೋಗ್ಯ ಸೇವೆ', Malayalam: 'ആരോഗ്യം' },
+    catHousing: { English: 'Housing', Hindi: 'आवास', Tamil: 'வீட்டுவசதி', Bengali: 'আবাসন', Marathi: 'गृहनिर्माण', Telugu: 'గృహనిర్మాణం', Gujarati: 'હાઉસિંગ', Kannada: 'ವಸತಿ', Malayalam: 'പാർപ്പിടം' },
+    catSocialSecurity: { English: 'Social Security', Hindi: 'सामाजिक सुरक्षा', Tamil: 'சமூக பாதுகாப்பு', Bengali: 'সামাজিক নিরাপত্তা', Marathi: 'सामाजिक सुरक्षा', Telugu: 'సామాజిక భద్రత', Gujarati: 'સામાજિક સુરક્ષા', Kannada: 'ಸಾಮಾಜಿಕ ಭದ್ರತೆ', Malayalam: 'സാമൂഹ്യ സുരക്ഷ' },
+    catEmployment: { English: 'Employment', Hindi: 'रोजगार', Tamil: 'வேலைவாய்ப்பு', Bengali: 'কর্মসংস্থান', Marathi: 'रोजगार', Telugu: 'ఉపాధి', Gujarati: 'રોજગાર', Kannada: 'ಉದ್ಯೋಗ', Malayalam: 'തൊഴിൽ' },
+    catSelfEmployment: { English: 'Self-Employment', Hindi: 'स्वरोजगार', Tamil: 'சுய வேலைவாய்ப்பு', Bengali: 'স্ব-কর্মসংস্থান', Marathi: 'स्वयंरोजगार', Telugu: 'స్వయం ఉపాధి', Gujarati: 'સ્વ-રોજગાર', Kannada: 'ಸ್ವಯಂ ಉದ್ಯೋಗ', Malayalam: 'സ്വയം തൊഴിൽ' },
+    catWomenChild: { English: 'Women & Child', Hindi: 'महिला एवं बाल', Tamil: 'பெண்கள் & குழந்தைகள்', Bengali: 'মহিলা এবং শিশু', Marathi: 'महिला आणि बाल', Telugu: 'స్త్రీలు & పిల్లలు', Gujarati: 'મહિલા અને બાળ', Kannada: 'ಮಹಿಳೆ ಮತ್ತು ಮಗು', Malayalam: 'സ്ത്രീകളും കുട്ടികളും' },
+    catSportsCulture: { English: 'Sports & Culture', Hindi: 'खेल और संस्कृति', Tamil: 'விளையாட்டு & கலாச்சாரம்', Bengali: 'খেলাধুলা ও সংস্কৃতি', Marathi: 'क्रीडा आणि संस्कृती', Telugu: 'క్రీడలు & సంస్కృతి', Gujarati: 'રમતગમત અને સંસ્કૃતિ', Kannada: 'ಕ್ರೀಡೆ ಮತ್ತು ಸಂಸ್ಕೃತಿ', Malayalam: 'കായികവും സംസ്കാരവും' },
+    catInfrastructure: { English: 'Infrastructure', Hindi: 'बुनियादी ढांचा', Tamil: 'உள்கட்டமைப்பு', Bengali: 'অবকাঠামো', Marathi: 'पायाभूत सुविधा', Telugu: 'మౌలిక సదుపాయాలు', Gujarati: 'ઇન્ફ્રાસ્ટ્રક્ચર', Kannada: 'ಮೂಲಸೌಕರ್ಯ', Malayalam: 'അടിസ്ഥാന സൗകര്യങ്ങൾ' },
+
+    browseByCategory: { English: 'Browse by Category', Hindi: 'श्रेणी के अनुसार ब्राउज़ करें', Tamil: 'வகை வாரியாக உலாவவும்', Bengali: 'বিভাগ অনুযায়ী ব্রাউজ করুন', Marathi: 'श्रेणीनुसार ब्राउझ करा', Telugu: 'వర్గం వారీగా బ్రౌజ్ చేయండి', Gujarati: 'શ્રેણી દ્વારા બ્રાઉઝ કરો', Kannada: 'ವರ್ಗದ ಮೂಲಕ ಬ್ರೌಸ್ ಮಾಡಿ', Malayalam: 'വിഭാഗം അനുസരിച്ച് ബ്രൗസ് ചെയ്യുക' }
 };
 
 export const getTranslator = (lang: string) => {
@@ -166,7 +180,7 @@ export const getTranslator = (lang: string) => {
         } else {
             // Fallback for dynamic keys like scheme IDs that might not have a direct entry
             const schemeEntry = translations[key as keyof typeof translations];
-            if(schemeEntry && schemeEntry[lang as keyof typeof schemeEntry]) {
+            if (schemeEntry && schemeEntry[lang as keyof typeof schemeEntry]) {
                 translationText = schemeEntry[lang as keyof typeof schemeEntry];
             } else if (schemeEntry && schemeEntry['English']) {
                 translationText = schemeEntry['English'];
@@ -181,7 +195,7 @@ export const getTranslator = (lang: string) => {
                 translationText = translationText.replace(`{${paramKey}}`, String(params[paramKey]));
             });
         }
-        
+
         return translationText;
     };
 };

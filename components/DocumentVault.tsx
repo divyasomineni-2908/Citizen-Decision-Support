@@ -1,37 +1,15 @@
 import React, { useState } from 'react';
-
-interface Document {
-  id: string;
-  name: string;
-  type: string;
-  size: number;
-  uploadDate: string;
-  category: 'Identity' | 'Income' | 'Residence' | 'Other';
-}
+import { Document } from '../types';
 
 interface DocumentVaultProps {
   language: string;
+  documents: Document[];
+  onAddDocument: (doc: Document) => void;
+  onDeleteDocument: (id: string) => void;
 }
 
-const DocumentVault: React.FC<DocumentVaultProps> = ({ language }) => {
-  const [documents, setDocuments] = useState<Document[]>([
-    {
-      id: '1',
-      name: 'Aadhaar Card.pdf',
-      type: 'application/pdf',
-      size: 245000,
-      uploadDate: '2026-01-15',
-      category: 'Identity'
-    },
-    {
-      id: '2',
-      name: 'Income Certificate.pdf',
-      type: 'application/pdf',
-      size: 180000,
-      uploadDate: '2026-01-10',
-      category: 'Income'
-    }
-  ]);
+const DocumentVault: React.FC<DocumentVaultProps> = ({ language, documents, onAddDocument, onDeleteDocument }) => {
+  // Local documents state removed in favor of props
   const [uploading, setUploading] = useState(false);
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -39,25 +17,27 @@ const DocumentVault: React.FC<DocumentVaultProps> = ({ language }) => {
     if (!files) return;
 
     setUploading(true);
-    
+
     // Simulate upload with delay
     setTimeout(() => {
-      const newDocuments: Document[] = Array.from(files).map((file, index) => ({
-        id: `${Date.now()}-${index}`,
-        name: file.name,
-        type: file.type,
-        size: file.size,
-        uploadDate: new Date().toISOString().split('T')[0],
-        category: 'Other'
-      }));
-      
-      setDocuments([...documents, ...newDocuments]);
+      Array.from(files).forEach((file: File, index) => {
+        const newDoc: Document = {
+          id: `${Date.now()}-${index}`,
+          name: file.name,
+          type: file.type,
+          size: file.size,
+          uploadDate: new Date().toISOString().split('T')[0],
+          category: 'Other'
+        };
+        onAddDocument(newDoc);
+      });
+
       setUploading(false);
     }, 1500);
   };
 
   const deleteDocument = (id: string) => {
-    setDocuments(documents.filter(doc => doc.id !== id));
+    onDeleteDocument(id);
   };
 
   const formatFileSize = (bytes: number) => {
@@ -101,7 +81,7 @@ const DocumentVault: React.FC<DocumentVaultProps> = ({ language }) => {
 
         <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900 rounded-lg">
           <p className="text-sm text-blue-800 dark:text-blue-200">
-            💡 {language === 'Hindi' 
+            💡 {language === 'Hindi'
               ? 'आपके दस्तावेज़ सुरक्षित रूप से एन्क्रिप्ट किए गए हैं। कई योजनाओं में आवेदन के लिए उनका पुन: उपयोग करें।'
               : 'Your documents are securely encrypted. Reuse them for multiple scheme applications.'}
           </p>

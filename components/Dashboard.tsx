@@ -20,6 +20,8 @@ interface ProfileProps {
     userProfile: UserProfile;
     onUpdateProfile: (profile: UserProfile) => void;
     language: string;
+    applications: Application[];
+    onAddApplication: (app: Application) => void;
 }
 
 const FavoriteSchemeItem: React.FC<{
@@ -98,9 +100,9 @@ const FavoriteSchemeItem: React.FC<{
 };
 
 
-const Profile: React.FC<ProfileProps> = ({ schemes, onToggleFavorite, userProfile, onUpdateProfile, language }) => {
+const Profile: React.FC<ProfileProps> = ({ schemes, onToggleFavorite, userProfile, onUpdateProfile, language, applications, onAddApplication }) => {
     const t = getTranslator(language);
-    const [applications, setApplications] = useState<Application[]>(MOCK_APPLICATIONS);
+    // Local applications state removed
     const [selectedApplication, setSelectedApplication] = useState<Application | null>(null);
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [isEditProfileModalOpen, setIsEditProfileModalOpen] = useState(false);
@@ -118,8 +120,17 @@ const Profile: React.FC<ProfileProps> = ({ schemes, onToggleFavorite, userProfil
             ...newAppData,
             id: `app-${Date.now()}`,
             schemeId: newAppData.schemeTitle.toLowerCase().replace(/\s+/g, '-'), // Note: this is a mock mapping
-        };
-        setApplications(prev => [newApplication, ...prev]);
+            applicationId: `APP${Date.now()}`, // Generated ID
+            status: 'Submitted', // Default
+            details: newAppData.details || 'Application submitted successfully.',
+            submissionDate: new Date().toISOString().split('T')[0],
+            timeline: [
+                { stage: 'Submitted', date: new Date().toISOString().split('T')[0], completed: true },
+                { stage: 'Under Review', date: '', completed: false }
+            ]
+        } as Application;
+
+        onAddApplication(newApplication);
         setIsAddModalOpen(false);
     };
 
@@ -190,7 +201,7 @@ const Profile: React.FC<ProfileProps> = ({ schemes, onToggleFavorite, userProfil
                         </div>
                     </div>
                 </div>
-                <button 
+                <button
                     onClick={() => setIsEditProfileModalOpen(true)}
                     className="bg-gray-200 text-gray-700 font-bold py-2 px-4 rounded-md hover:bg-gray-300 transition-colors"
                 >
@@ -203,7 +214,7 @@ const Profile: React.FC<ProfileProps> = ({ schemes, onToggleFavorite, userProfil
                 <div className="bg-white shadow-md rounded-lg">
                     {favoriteSchemes.length > 0 ? (
                         <ul className="divide-y divide-gray-200">
-                           {favoriteSchemes.map(scheme => (
+                            {favoriteSchemes.map(scheme => (
                                 <FavoriteSchemeItem
                                     key={scheme.id}
                                     scheme={scheme}
@@ -212,7 +223,7 @@ const Profile: React.FC<ProfileProps> = ({ schemes, onToggleFavorite, userProfil
                                     onToggleFavorite={onToggleFavorite}
                                     language={language}
                                 />
-                           ))}
+                            ))}
                         </ul>
                     ) : (
                         <div className="p-6">
@@ -221,10 +232,10 @@ const Profile: React.FC<ProfileProps> = ({ schemes, onToggleFavorite, userProfil
                     )}
                 </div>
             </div>
-            
+
             <div className="flex justify-between items-center mb-4 flex-wrap gap-4">
                 <h2 className="text-3xl font-bold text-dark">{t('applicationHistory')}</h2>
-                <button 
+                <button
                     onClick={() => setIsAddModalOpen(true)}
                     className="bg-secondary text-white font-bold py-2 px-4 rounded-md hover:bg-green-700 flex items-center transition-colors"
                     aria-label="Add new application"
@@ -256,13 +267,13 @@ const Profile: React.FC<ProfileProps> = ({ schemes, onToggleFavorite, userProfil
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
                             {sortedApplications.map((app) => (
-                                <tr 
-                                  key={app.id} 
-                                  className="hover:bg-gray-50 cursor-pointer"
-                                  onClick={() => setSelectedApplication(app)}
-                                  tabIndex={0}
-                                  onKeyPress={(e) => e.key === 'Enter' && setSelectedApplication(app)}
-                                  aria-label={`View details for application ${app.id}`}
+                                <tr
+                                    key={app.id}
+                                    className="hover:bg-gray-50 cursor-pointer"
+                                    onClick={() => setSelectedApplication(app)}
+                                    tabIndex={0}
+                                    onKeyPress={(e) => e.key === 'Enter' && setSelectedApplication(app)}
+                                    aria-label={`View details for application ${app.id}`}
                                 >
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         <div className="text-sm font-medium text-gray-900">{t(app.schemeId)}</div>
@@ -280,7 +291,7 @@ const Profile: React.FC<ProfileProps> = ({ schemes, onToggleFavorite, userProfil
             </div>
 
             {selectedApplication && (
-                <ApplicationDetail 
+                <ApplicationDetail
                     application={selectedApplication}
                     onClose={() => setSelectedApplication(null)}
                     language={language}

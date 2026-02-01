@@ -1,13 +1,14 @@
-import { GoogleGenAI, Type } from "@google/genai";
+import { GoogleGenerativeAI, SchemaType } from "@google/generative-ai";
 import { Scheme, SimplifiedScheme, FailedCriterion, EligibilityAdvice, UserProfile } from '../types';
 
-const API_KEY = process.env.API_KEY;
+const API_KEY = import.meta.env.VITE_GEMINI_API_KEY || import.meta.env.VITE_API_KEY;
 
 if (!API_KEY) {
-  console.warn("API_KEY is not set. Chatbot functionality will be disabled.");
+  console.warn("⚠️ Gemini API key is not set. Chatbot and AI features will be disabled. Please add VITE_GEMINI_API_KEY to your .env file.");
 }
 
-const ai = new GoogleGenAI({ apiKey: API_KEY });
+const genAI = API_KEY ? new GoogleGenerativeAI(API_KEY) : null;
+const model = genAI ? genAI.getGenerativeModel({ model: "gemini-1.5-flash" }) : null;
 
 const SYSTEM_INSTRUCTION = `
 You are a friendly and helpful AI assistant for 'GovWelfare Connect', a platform that provides information about government welfare schemes in India.
@@ -22,24 +23,35 @@ Base your knowledge on publicly available information about Indian government we
 `;
 
 export const getChatbotResponse = async (userMessage: string): Promise<string> => {
-  if (!API_KEY) {
-    return "The chatbot is currently unavailable because the API key is not configured.";
+  if (!model) {
+    return "🔧 The AI chatbot needs to be configured with a Gemini API key.\n\nTo enable this feature:\n1. Get a free API key from https://makersuite.google.com/app/apikey\n2. Create a .env file in your project root\n3. Add: VITE_GEMINI_API_KEY=your_key_here\n4. Restart the development server\n\nIn the meantime, you can browse schemes using the main directory!";
   }
 
   try {
-    const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
-      contents: userMessage,
-      config: {
-        systemInstruction: SYSTEM_INSTRUCTION,
+    const chat = model.startChat({
+      history: [
+        {
+          role: "user",
+          parts: [{ text: SYSTEM_INSTRUCTION }],
+        },
+        {
+          role: "model",
+          parts: [{ text: "Understood. I am ready to assist users with government welfare schemes." }],
+        }
+      ],
+      generationConfig: {
         temperature: 0.7,
-      }
+      },
     });
-    
-    if (response.text) {
-        return response.text;
+
+    const result = await chat.sendMessage(userMessage);
+    const response = await result.response;
+    const text = response.text();
+
+    if (text) {
+      return text;
     }
-    
+
     return "I'm sorry, I couldn't generate a response. Please try again.";
   } catch (error) {
     console.error("Error fetching response from Gemini API:", error);
@@ -48,27 +60,27 @@ export const getChatbotResponse = async (userMessage: string): Promise<string> =
 };
 
 export const simplifySchemeDetails = async (scheme: Scheme): Promise<SimplifiedScheme> => {
-    if (!API_KEY) {
-        throw new Error("API key is not configured.");
-    }
+  if (!genAI || !API_KEY) {
+    throw new Error("API key is not configured.");
+  }
 
-    const eligibilityString = Object.entries(scheme.eligibility)
-        .filter(([, value]) => value != null)
-        .map(([key, value]) => {
-            switch (key) {
-                case 'minAge': return `Must be at least ${value} years old`;
-                case 'maxAge': return `Must be no more than ${value} years old`;
-                case 'maxIncome': return `Annual household income should not be more than ₹${(value as number).toLocaleString('en-IN')}`;
-                case 'minIncome': return `Annual household income should be at least ₹${(value as number).toLocaleString('en-IN')}`;
-                case 'category': return `Must belong to the ${value} category`;
-                case 'state': return `Must be a resident of ${value}`;
-                default: return '';
-            }
-        })
-        .filter(Boolean)
-        .join('. ');
+  const eligibilityString = Object.entries(scheme.eligibility)
+    .filter(([, value]) => value != null)
+    .map(([key, value]) => {
+      switch (key) {
+        case 'minAge': return `Must be at least ${value} years old`;
+        case 'maxAge': return `Must be no more than ${value} years old`;
+        case 'maxIncome': return `Annual household income should not be more than ₹${(value as number).toLocaleString('en-IN')}`;
+        case 'minIncome': return `Annual household income should be at least ₹${(value as number).toLocaleString('en-IN')}`;
+        case 'category': return `Must belong to the ${value} category`;
+        case 'state': return `Must be a resident of ${value}`;
+        default: return '';
+      }
+    })
+    .filter(Boolean)
+    .join('. ');
 
-    const prompt = `
+  const prompt = `
         You are an expert at simplifying complex information.
         Your task is to simplify the details of a government welfare scheme for a general audience with a low reading level (around 5th grade).
         Focus on clarity and ease of understanding. Avoid jargon. Use short sentences and simple words.
@@ -81,53 +93,53 @@ export const simplifySchemeDetails = async (scheme: Scheme): Promise<SimplifiedS
         - Eligibility Criteria: "${eligibilityString || 'General eligibility criteria apply.'}"
     `;
 
-    try {
-        const response = await ai.models.generateContent({
-            model: "gemini-3-flash-preview",
-            contents: prompt,
-            config: {
-                responseMimeType: "application/json",
-                responseSchema: {
-                    type: Type.OBJECT,
-                    properties: {
-                        description: {
-                            type: Type.STRING,
-                            description: "A simplified, easy-to-understand summary of the scheme.",
-                        },
-                        benefits: {
-                            type: Type.ARRAY,
-                            items: { type: Type.STRING },
-                            description: "A list of the key benefits in simple language, one benefit per string.",
-                        },
-                        eligibility: {
-                            type: Type.STRING,
-                            description: "A single paragraph explaining who can apply in very simple terms.",
-                        },
-                    },
-                    required: ["description", "benefits", "eligibility"],
-                },
-                temperature: 0.3,
-            }
-        });
+  try {
+    const jsonModel = genAI.getGenerativeModel({
+      model: "gemini-1.5-flash",
+      generationConfig: {
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: SchemaType.OBJECT,
+          properties: {
+            description: {
+              type: SchemaType.STRING,
+              description: "A simplified, easy-to-understand summary of the scheme.",
+            },
+            benefits: {
+              type: SchemaType.ARRAY,
+              items: { type: SchemaType.STRING },
+              description: "A list of the key benefits in simple language, one benefit per string.",
+            },
+            eligibility: {
+              type: SchemaType.STRING,
+              description: "A single paragraph explaining who can apply in very simple terms.",
+            },
+          },
+          required: ["description", "benefits", "eligibility"],
+        },
+        temperature: 0.3,
+      }
+    });
 
-        const textResponse = response.text.trim();
-        if (textResponse) {
-            return JSON.parse(textResponse) as SimplifiedScheme;
-        }
-
-        throw new Error("Failed to get a valid response from the API.");
-
-    } catch (error) {
-        console.error("Error simplifying scheme details:", error);
-        throw new Error("Could not simplify the scheme details. Please try again later.");
+    const result = await jsonModel.generateContent(prompt);
+    const textResponse = result.response.text().trim();
+    if (textResponse) {
+      return JSON.parse(textResponse) as SimplifiedScheme;
     }
+
+    throw new Error("Failed to get a valid response from the API.");
+
+  } catch (error) {
+    console.error("Error simplifying scheme details:", error);
+    throw new Error("Could not simplify the scheme details. Please try again later.");
+  }
 };
 
 export const translateText = async (
   text: string | string[],
   targetLanguage: string
 ): Promise<string | string[]> => {
-  if (!API_KEY) {
+  if (!genAI || !API_KEY) {
     throw new Error("API key is not configured.");
   }
   if (targetLanguage === 'English' || !text || text.length === 0) {
@@ -136,11 +148,11 @@ export const translateText = async (
 
   const isArray = Array.isArray(text);
   const textsToTranslate = isArray ? (text as string[]) : [text as string];
-  
+
   // Filter out any empty strings to avoid sending them to the API
   const nonEmptyTexts = textsToTranslate.filter(t => t.trim() !== '');
   if (nonEmptyTexts.length === 0) {
-      return text;
+    return text;
   }
 
   const prompt = `
@@ -153,26 +165,26 @@ export const translateText = async (
   `;
 
   try {
-    const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
-      contents: prompt,
-      config: {
+    const jsonModel = genAI.getGenerativeModel({
+      model: "gemini-1.5-flash",
+      generationConfig: {
         responseMimeType: "application/json",
-         responseSchema: {
-          type: Type.ARRAY,
-          items: { type: Type.STRING },
+        responseSchema: {
+          type: SchemaType.ARRAY,
+          items: { type: SchemaType.STRING },
           description: "An array of translated strings, one for each input string."
         },
         temperature: 0.1,
       }
     });
 
-    const textResponse = response.text.trim();
+    const result = await jsonModel.generateContent(prompt);
+    const textResponse = result.response.text().trim();
     if (textResponse) {
       const translatedArray = JSON.parse(textResponse) as string[];
       return isArray ? translatedArray : translatedArray[0];
     }
-    
+
     throw new Error("Failed to get a valid translated response from the API.");
   } catch (error) {
     console.error(`Error translating text to ${targetLanguage}:`, error);
@@ -183,20 +195,20 @@ export const translateText = async (
 
 
 export const generateEligibilitySuggestions = async (
-    scheme: Scheme,
-    userProfile: UserProfile,
-    failedCriteria: FailedCriterion[],
-    language: string
+  scheme: Scheme,
+  userProfile: UserProfile,
+  failedCriteria: FailedCriterion[],
+  language: string
 ): Promise<EligibilityAdvice> => {
-    if (!API_KEY) {
-        throw new Error("API key is not configured.");
-    }
+  if (!genAI || !API_KEY) {
+    throw new Error("API key is not configured.");
+  }
 
-    const failedCriteriaString = failedCriteria
-        .map(fc => `- ${fc.criterion}: Expected '${fc.expected}', but your profile shows '${fc.actual}'.`)
-        .join('\n');
+  const failedCriteriaString = failedCriteria
+    .map(fc => `- ${fc.criterion}: Expected '${fc.expected}', but your profile shows '${fc.actual}'.`)
+    .join('\n');
 
-    const prompt = `
+  const prompt = `
         You are a helpful and empathetic AI assistant for 'GovWelfare Connect', a portal for Indian government schemes.
         Your goal is to explain to a user why they are not eligible for a specific scheme in simple, encouraging terms and provide actionable advice. Avoid jargon.
 
@@ -225,36 +237,36 @@ export const generateEligibilitySuggestions = async (
         3.  **alternativeSchemesSuggestion**: A single string suggesting that the user look for other schemes, especially mentioning the scheme's category (e.g., "You might be eligible for other 'Agriculture' schemes.").
     `;
 
-    try {
-        const response = await ai.models.generateContent({
-            model: "gemini-3-flash-preview",
-            contents: prompt,
-            config: {
-                responseMimeType: "application/json",
-                responseSchema: {
-                    type: Type.OBJECT,
-                    properties: {
-                        ineligibilityReason: { type: Type.STRING },
-                        eligibilitySuggestions: {
-                            type: Type.ARRAY,
-                            items: { type: Type.STRING },
-                        },
-                        alternativeSchemesSuggestion: { type: Type.STRING },
-                    },
-                    required: ["ineligibilityReason", "eligibilitySuggestions", "alternativeSchemesSuggestion"],
-                },
-                temperature: 0.4,
-            }
-        });
-        
-        const textResponse = response.text.trim();
-        if (textResponse) {
-            return JSON.parse(textResponse) as EligibilityAdvice;
-        }
-        throw new Error("Failed to get a valid response from the API.");
+  try {
+    const jsonModel = genAI.getGenerativeModel({
+      model: "gemini-1.5-flash",
+      generationConfig: {
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: SchemaType.OBJECT,
+          properties: {
+            ineligibilityReason: { type: SchemaType.STRING },
+            eligibilitySuggestions: {
+              type: SchemaType.ARRAY,
+              items: { type: SchemaType.STRING },
+            },
+            alternativeSchemesSuggestion: { type: SchemaType.STRING },
+          },
+          required: ["ineligibilityReason", "eligibilitySuggestions", "alternativeSchemesSuggestion"],
+        },
+        temperature: 0.4,
+      }
+    });
 
-    } catch (error) {
-        console.error("Error generating eligibility suggestions:", error);
-        throw new Error("Could not generate eligibility advice. Please try again later.");
+    const result = await jsonModel.generateContent(prompt);
+    const textResponse = result.response.text().trim();
+    if (textResponse) {
+      return JSON.parse(textResponse) as EligibilityAdvice;
     }
+    throw new Error("Failed to get a valid response from the API.");
+
+  } catch (error) {
+    console.error("Error generating eligibility suggestions:", error);
+    throw new Error("Could not generate eligibility advice. Please try again later.");
+  }
 };

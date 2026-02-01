@@ -1,69 +1,19 @@
 import React, { useState } from 'react';
 
-interface ApplicationTracking {
-  id: string;
-  schemeTitle: string;
-  applicationId: string;
-  submissionDate: string;
-  lastUpdate: string;
-  status: 'Submitted' | 'Under Review' | 'Documents Verified' | 'Approved' | 'Rejected' | 'Disbursed';
-  timeline: {
-    stage: string;
-    date: string;
-    completed: boolean;
-  }[];
-  nextAction?: string;
-  officerName?: string;
-  officerContact?: string;
-}
+import { Application } from '../types';
 
-interface ApplicationTrackingProps {
+interface ApplicationStatusTrackingProps {
   language: string;
+  applications: Application[];
+  onUpdateApplication?: (app: Application) => void;
 }
 
-const ApplicationStatusTracking: React.FC<ApplicationTrackingProps> = ({ language }) => {
-  const [applications] = useState<ApplicationTracking[]>([
-    {
-      id: '1',
-      schemeTitle: 'Pradhan Mantri Kisan Samman Nidhi',
-      applicationId: 'PMK2026001234',
-      submissionDate: '2026-01-10',
-      lastUpdate: '2026-01-25',
-      status: 'Documents Verified',
-      timeline: [
-        { stage: 'Submitted', date: '2026-01-10', completed: true },
-        { stage: 'Under Review', date: '2026-01-15', completed: true },
-        { stage: 'Documents Verified', date: '2026-01-25', completed: true },
-        { stage: 'Approved', date: '', completed: false },
-        { stage: 'Disbursed', date: '', completed: false }
-      ],
-      nextAction: 'Awaiting final approval from District Officer',
-      officerName: 'Mr. Rajesh Kumar',
-      officerContact: '+91-9876543210'
-    },
-    {
-      id: '2',
-      schemeTitle: 'PM-JAY Health Insurance',
-      applicationId: 'PMJAY2026005678',
-      submissionDate: '2026-01-05',
-      lastUpdate: '2026-01-30',
-      status: 'Approved',
-      timeline: [
-        { stage: 'Submitted', date: '2026-01-05', completed: true },
-        { stage: 'Under Review', date: '2026-01-10', completed: true },
-        { stage: 'Documents Verified', date: '2026-01-20', completed: true },
-        { stage: 'Approved', date: '2026-01-30', completed: true },
-        { stage: 'Card Issued', date: '', completed: false }
-      ],
-      nextAction: 'Health card will be sent to your registered address',
-      officerName: 'Ms. Priya Sharma',
-      officerContact: '+91-9876543211'
-    }
-  ]);
+const ApplicationStatusTracking: React.FC<ApplicationStatusTrackingProps> = ({ language, applications, onUpdateApplication }) => {
+  // Local state removed, using props
+  const [selectedApp, setSelectedApp] = useState<Application | null>(null);
 
-  const [selectedApp, setSelectedApp] = useState<ApplicationTracking | null>(null);
 
-  const getStatusColor = (status: ApplicationTracking['status']) => {
+  const getStatusColor = (status: Application['status']) => {
     const colors = {
       'Submitted': 'bg-blue-100 text-blue-800',
       'Under Review': 'bg-yellow-100 text-yellow-800',
@@ -92,9 +42,8 @@ const ApplicationStatusTracking: React.FC<ApplicationTrackingProps> = ({ languag
             <div
               key={app.id}
               onClick={() => setSelectedApp(app)}
-              className={`bg-white dark:bg-gray-800 rounded-lg shadow-md p-5 cursor-pointer transition-all hover:shadow-lg ${
-                selectedApp?.id === app.id ? 'ring-2 ring-primary' : ''
-              }`}
+              className={`bg-white dark:bg-gray-800 rounded-lg shadow-md p-5 cursor-pointer transition-all hover:shadow-lg ${selectedApp?.id === app.id ? 'ring-2 ring-primary' : ''
+                }`}
             >
               <div className="flex justify-between items-start mb-3">
                 <h3 className="font-semibold text-gray-900 dark:text-white text-lg">
@@ -104,7 +53,7 @@ const ApplicationStatusTracking: React.FC<ApplicationTrackingProps> = ({ languag
                   {app.status}
                 </span>
               </div>
-              
+
               <div className="space-y-2 text-sm text-gray-600 dark:text-gray-300">
                 <p><strong>Application ID:</strong> {app.applicationId}</p>
                 <p><strong>Submitted:</strong> {app.submissionDate}</p>
@@ -133,7 +82,7 @@ const ApplicationStatusTracking: React.FC<ApplicationTrackingProps> = ({ languag
               <h3 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">
                 Application Timeline
               </h3>
-              
+
               <div className="mb-6">
                 <p className="text-sm text-gray-600 dark:text-gray-300 mb-2">
                   <strong>Application ID:</strong> {selectedApp.applicationId}
@@ -149,19 +98,17 @@ const ApplicationStatusTracking: React.FC<ApplicationTrackingProps> = ({ languag
                   <div key={index} className="flex gap-4 mb-6">
                     <div className="flex flex-col items-center">
                       <div
-                        className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                          stage.completed
-                            ? 'bg-green-500 text-white'
-                            : 'bg-gray-300 text-gray-600'
-                        }`}
+                        className={`w-8 h-8 rounded-full flex items-center justify-center ${stage.completed
+                          ? 'bg-green-500 text-white'
+                          : 'bg-gray-300 text-gray-600'
+                          }`}
                       >
                         {stage.completed ? '✓' : index + 1}
                       </div>
                       {index < selectedApp.timeline.length - 1 && (
                         <div
-                          className={`w-1 h-12 ${
-                            stage.completed ? 'bg-green-500' : 'bg-gray-300'
-                          }`}
+                          className={`w-1 h-12 ${stage.completed ? 'bg-green-500' : 'bg-gray-300'
+                            }`}
                         />
                       )}
                     </div>

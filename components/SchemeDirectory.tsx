@@ -21,14 +21,15 @@ interface SchemeDirectoryProps {
     schemes: Scheme[];
     onToggleFavorite: (schemeId: string) => void;
     language: string;
+    initialCategory?: string;
 }
 
-const SchemeDirectory: React.FC<SchemeDirectoryProps> = ({ schemes, onToggleFavorite, language }) => {
+const SchemeDirectory: React.FC<SchemeDirectoryProps> = ({ schemes, onToggleFavorite, language, initialCategory = '' }) => {
     const t = getTranslator(language);
     const [selectedScheme, setSelectedScheme] = useState<Scheme | null>(null);
     const [schemeForHowToApply, setSchemeForHowToApply] = useState<Scheme | null>(null);
     const [searchQuery, setSearchQuery] = useState('');
-    const [selectedCategory, setSelectedCategory] = useState('');
+    const [selectedCategory, setSelectedCategory] = useState(initialCategory);
     const [selectedDepartment, setSelectedDepartment] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const [sortConfig, setSortConfig] = useState<SortConfig>({ key: 'title', direction: 'ascending' });
@@ -50,7 +51,7 @@ const SchemeDirectory: React.FC<SchemeDirectoryProps> = ({ schemes, onToggleFavo
         setSelectedDepartment('');
         setCurrentPage(1);
     }, [language]);
-    
+
     const handleEligibilityChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value, type } = e.target;
         if (type === 'checkbox') {
@@ -119,14 +120,14 @@ const SchemeDirectory: React.FC<SchemeDirectoryProps> = ({ schemes, onToggleFavo
                 return 0;
             });
         }
-        
+
         return items;
     }, [schemes, searchQuery, selectedCategory, selectedDepartment, sortConfig, eligibilityFilters]);
-    
+
     useEffect(() => {
         setCurrentPage(1);
     }, [searchQuery, selectedCategory, selectedDepartment, sortConfig, eligibilityFilters]);
-    
+
     const paginatedSchemes = useMemo(() => {
         const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
         return processedSchemes.slice(startIndex, startIndex + ITEMS_PER_PAGE);
@@ -175,7 +176,7 @@ const SchemeDirectory: React.FC<SchemeDirectoryProps> = ({ schemes, onToggleFavo
                             <SearchIcon className="h-5 w-5 text-gray-400" />
                         </div>
                     </div>
-                    <select 
+                    <select
                         value={selectedCategory}
                         onChange={e => setSelectedCategory(e.target.value)}
                         className="w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary"
@@ -186,7 +187,7 @@ const SchemeDirectory: React.FC<SchemeDirectoryProps> = ({ schemes, onToggleFavo
                             <option key={c} value={c}>{c}</option>
                         ))}
                     </select>
-                    <select 
+                    <select
                         value={selectedDepartment}
                         onChange={e => setSelectedDepartment(e.target.value)}
                         className="w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary"
@@ -201,7 +202,7 @@ const SchemeDirectory: React.FC<SchemeDirectoryProps> = ({ schemes, onToggleFavo
 
                 <div className="pt-4 border-t border-gray-200">
                     <div className="flex justify-between items-center">
-                        <button 
+                        <button
                             onClick={() => setIsAdvancedSearchOpen(!isAdvancedSearchOpen)}
                             className="flex items-center gap-2 text-sm font-medium text-primary hover:text-blue-700"
                             aria-expanded={isAdvancedSearchOpen}
@@ -252,10 +253,10 @@ const SchemeDirectory: React.FC<SchemeDirectoryProps> = ({ schemes, onToggleFavo
                     )}
                 </div>
 
-                 <div className="flex items-center gap-2 flex-wrap pt-4 border-t border-gray-200">
+                <div className="flex items-center gap-2 flex-wrap pt-4 border-t border-gray-200">
                     <span className="text-sm font-medium text-gray-600">{t('sortBy')}</span>
                     {(['title', 'category', 'department'] as SortableSchemeKeys[]).map((key) => (
-                        <button 
+                        <button
                             key={key}
                             onClick={() => requestSort(key)}
                             className={`flex items-center gap-1 text-sm font-medium px-3 py-1 rounded-full transition-colors ${sortConfig.key === key ? 'bg-primary/10 text-primary' : 'text-gray-600 hover:bg-gray-100'}`}
@@ -270,10 +271,10 @@ const SchemeDirectory: React.FC<SchemeDirectoryProps> = ({ schemes, onToggleFavo
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {paginatedSchemes.length > 0 ? (
                     paginatedSchemes.map(scheme => (
-                        <SchemeCard 
-                            key={scheme.id} 
-                            scheme={scheme} 
-                            onViewDetails={setSelectedScheme} 
+                        <SchemeCard
+                            key={scheme.id}
+                            scheme={scheme}
+                            onViewDetails={setSelectedScheme}
                             onHowToApply={setSchemeForHowToApply}
                             onToggleFavorite={onToggleFavorite}
                             language={language}
@@ -285,10 +286,10 @@ const SchemeDirectory: React.FC<SchemeDirectoryProps> = ({ schemes, onToggleFavo
                     </div>
                 )}
             </div>
-            
+
             {totalPages > 1 && (
                 <div className="mt-12">
-                    <Pagination 
+                    <Pagination
                         currentPage={currentPage}
                         totalPages={totalPages}
                         onPageChange={setCurrentPage}
