@@ -60,6 +60,7 @@ export interface SimplifiedScheme {
 }
 
 export interface UserProfile {
+    name: string;
     gender: 'Male' | 'Female' | 'Other';
     age: number;
     state: string;

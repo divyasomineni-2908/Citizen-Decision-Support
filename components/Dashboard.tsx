@@ -1,11 +1,11 @@
-import React, { useState, useMemo, useEffect, useRef } from 'react';
+import React, { useState, useMemo } from 'react';
 import { MOCK_APPLICATIONS } from '../constants';
-import { Application, Scheme } from '../types';
+import { Application, Scheme, UserProfile } from '../types';
 import { UserIcon, PlusIcon, ArrowUpIcon, ArrowDownIcon, SortIcon, StarIcon } from './Icons';
 import { StatusBadge } from './StatusBadge';
 import ApplicationDetail from './ApplicationDetail';
 import AddApplicationModal from './AddApplicationModal';
-import { translateText } from '../services/geminiService';
+import EditProfileModal from './EditProfileModal';
 import { getTranslator } from '../services/translations';
 
 type SortableKeys = 'submissionDate' | 'status';
@@ -17,12 +17,9 @@ type SortConfig = {
 interface ProfileProps {
     schemes: Scheme[];
     onToggleFavorite: (schemeId: string) => void;
+    userProfile: UserProfile;
+    onUpdateProfile: (profile: UserProfile) => void;
     language: string;
-}
-
-interface TranslatedContent {
-    description: string;
-    benefits: string[];
 }
 
 const FavoriteSchemeItem: React.FC<{
@@ -32,48 +29,16 @@ const FavoriteSchemeItem: React.FC<{
     onToggleFavorite: (schemeId: string) => void;
     language: string;
 }> = ({ scheme, isExpanded, onToggleExpand, onToggleFavorite, language }) => {
-    
-    const [translatedContent, setTranslatedContent] = useState<TranslatedContent | null>(null);
-    const [isTranslating, setIsTranslating] = useState(false);
-    const translationCache = useRef<{ [key: string]: TranslatedContent }>({});
     const t = getTranslator(language);
-
-    useEffect(() => {
-        if (isExpanded && language !== 'English') {
-            const translate = async () => {
-                const cacheKey = `${scheme.id}-${language}`;
-                if (translationCache.current[cacheKey]) {
-                    setTranslatedContent(translationCache.current[cacheKey]);
-                    return;
-                }
-                setIsTranslating(true);
-                try {
-                    const [description, benefits] = await Promise.all([
-                        translateText(scheme.description, language) as Promise<string>,
-                        translateText(scheme.benefits, language) as Promise<string[]>,
-                    ]);
-                    const content = { description, benefits };
-                    translationCache.current[cacheKey] = content;
-                    setTranslatedContent(content);
-                } catch (e) {
-                    console.error("Translation failed for favorite scheme", e);
-                } finally {
-                    setIsTranslating(false);
-                }
-            };
-            translate();
-        }
-    }, [isExpanded, language, scheme]);
-
-    const description = (language !== 'English' && translatedContent) ? translatedContent.description : scheme.description;
-    const benefits = (language !== 'English' && translatedContent) ? translatedContent.benefits : scheme.benefits;
+    const description = scheme.description;
+    const benefits = scheme.benefits;
     const eligibilityCriteria = Object.entries(scheme.eligibility).filter(([_, value]) => value != null);
 
     return (
         <li className="p-6 transition-colors hover:bg-gray-50">
             <div className="flex items-center justify-between cursor-pointer" onClick={onToggleExpand}>
                 <div className="flex-1">
-                    <p className="text-lg font-semibold text-dark">{t(scheme.id)}</p>
+                    <p className="text-lg font-semibold text-dark">{scheme.title}</p>
                     <p className="text-sm text-gray-500">{scheme.department}</p>
                 </div>
                 <div className="flex items-center gap-4 ml-4">
@@ -98,27 +63,20 @@ const FavoriteSchemeItem: React.FC<{
             </div>
             {isExpanded && (
                 <div className="mt-4 pt-4 border-t border-gray-200 space-y-4">
-                    {isTranslating ? (
-                         <div className="space-y-4">
-                            <div className="h-4 bg-gray-200 rounded animate-pulse w-3/4"></div>
-                            <div className="h-4 bg-gray-200 rounded animate-pulse w-1/2"></div>
-                         </div>
-                    ) : (
-                        <>
-                            <div>
-                                <h4 className="font-semibold text-md text-dark">{t('description')}</h4>
-                                <p className="mt-1 text-gray-600 text-sm">{description}</p>
-                            </div>
-                            <div>
-                                <h4 className="font-semibold text-md text-dark">{t('keyBenefits')}</h4>
-                                <ul className="mt-1 space-y-1 list-disc list-inside text-gray-600 text-sm">
-                                    {benefits.map((benefit, index) => (
-                                        <li key={index}>{benefit}</li>
-                                    ))}
-                                </ul>
-                            </div>
-                        </>
-                    )}
+                    <>
+                        <div>
+                            <h4 className="font-semibold text-md text-dark">{t('description')}</h4>
+                            <p className="mt-1 text-gray-600 text-sm">{description}</p>
+                        </div>
+                        <div>
+                            <h4 className="font-semibold text-md text-dark">{t('keyBenefits')}</h4>
+                            <ul className="mt-1 space-y-1 list-disc list-inside text-gray-600 text-sm">
+                                {benefits.map((benefit, index) => (
+                                    <li key={index}>{benefit}</li>
+                                ))}
+                            </ul>
+                        </div>
+                    </>
                     <div>
                         <h4 className="font-semibold text-md text-dark">{t('eligibilityCriteria')}</h4>
                         {eligibilityCriteria.length > 0 ? (
@@ -140,11 +98,12 @@ const FavoriteSchemeItem: React.FC<{
 };
 
 
-const Profile: React.FC<ProfileProps> = ({ schemes, onToggleFavorite, language }) => {
+const Profile: React.FC<ProfileProps> = ({ schemes, onToggleFavorite, userProfile, onUpdateProfile, language }) => {
     const t = getTranslator(language);
     const [applications, setApplications] = useState<Application[]>(MOCK_APPLICATIONS);
     const [selectedApplication, setSelectedApplication] = useState<Application | null>(null);
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+    const [isEditProfileModalOpen, setIsEditProfileModalOpen] = useState(false);
     const [sortConfig, setSortConfig] = useState<SortConfig>({ key: 'submissionDate', direction: 'descending' });
     const [expandedSchemeId, setExpandedSchemeId] = useState<string | null>(null);
 
@@ -222,11 +181,19 @@ const Profile: React.FC<ProfileProps> = ({ schemes, onToggleFavorite, language }
                         <UserIcon className="w-10 h-10 text-primary" />
                     </div>
                     <div>
-                        <h2 className="text-2xl font-bold text-dark">{t('dashboardUserTitle')}</h2>
-                        <p className="text-gray-500">citizen.user@email.gov | ID: GOV-12345</p>
+                        <h2 className="text-2xl font-bold text-dark">{userProfile.name}</h2>
+                        <div className="flex flex-wrap gap-x-4 gap-y-1 text-gray-600 mt-1 text-sm">
+                            <span><strong>{t('yourAge')}:</strong> {userProfile.age}</span>
+                            <span><strong>Income:</strong> ₹{userProfile.annualIncome.toLocaleString()}</span>
+                            <span><strong>{t('residence')}:</strong> {userProfile.residence}</span>
+                            <span><strong>Category:</strong> {userProfile.category}</span>
+                        </div>
                     </div>
                 </div>
-                <button className="bg-gray-200 text-gray-700 font-bold py-2 px-4 rounded-md hover:bg-gray-300 transition-colors">
+                <button 
+                    onClick={() => setIsEditProfileModalOpen(true)}
+                    className="bg-gray-200 text-gray-700 font-bold py-2 px-4 rounded-md hover:bg-gray-300 transition-colors"
+                >
                     {t('editProfile')}
                 </button>
             </div>
@@ -324,6 +291,15 @@ const Profile: React.FC<ProfileProps> = ({ schemes, onToggleFavorite, language }
                 <AddApplicationModal
                     onClose={() => setIsAddModalOpen(false)}
                     onAddApplication={handleAddApplication}
+                    language={language}
+                />
+            )}
+
+            {isEditProfileModalOpen && (
+                <EditProfileModal
+                    userProfile={userProfile}
+                    onSave={onUpdateProfile}
+                    onClose={() => setIsEditProfileModalOpen(false)}
                     language={language}
                 />
             )}

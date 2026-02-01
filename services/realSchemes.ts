@@ -1,4 +1,9 @@
 import { Scheme } from '../types';
+import { ADDITIONAL_SCHEMES } from './additionalSchemes';
+import { MORE_SCHEMES } from './moreSchemes';
+
+// Helper function to create myScheme.gov.in search links
+const MYSCHEME_BASE_URL = 'https://www.myscheme.gov.in/search';
 
 // Real Indian Government Schemes Database
 export const REAL_GOVT_SCHEMES: Scheme[] = [
@@ -26,7 +31,7 @@ export const REAL_GOVT_SCHEMES: Scheme[] = [
       'Upload land documents and bank passbook',
       'Submit and note the reference number'
     ],
-    applicationLink: 'https://pmkisan.gov.in/'
+    applicationLink: 'https://www.myscheme.gov.in/search'
   },
 
   // Ministry of Health
@@ -72,7 +77,7 @@ export const REAL_GOVT_SCHEMES: Scheme[] = [
     ],
     eligibility: {
       maxIncome: 300000,
-      category: 'SC/ST/OBC/EWS',
+      category: 'EWS',
     },
     applicationProcess: [
       'Check eligibility and apply online',
@@ -297,7 +302,7 @@ export const REAL_GOVT_SCHEMES: Scheme[] = [
       'Quarterly grain allocation'
     ],
     eligibility: {
-      category: 'SC/ST/OBC/General',
+      category: 'General',
     },
     applicationProcess: [
       'Get ration card (APL/BPL)',
@@ -380,7 +385,7 @@ export const REAL_GOVT_SCHEMES: Scheme[] = [
     ],
     eligibility: {
       isForStudents: true,
-      category: 'SC/ST',
+      category: 'SC',
       maxIncome: 250000,
     },
     applicationProcess: [
@@ -409,7 +414,7 @@ export const REAL_GOVT_SCHEMES: Scheme[] = [
     ],
     eligibility: {
       residence: 'Rural',
-      category: 'SC/ST/OBC/General',
+      category: 'General',
     },
     applicationProcess: [
       'Verify eligibility through SECC data',
@@ -519,7 +524,7 @@ export const REAL_GOVT_SCHEMES: Scheme[] = [
       'Vocational training'
     ],
     eligibility: {
-      isPwD: true,
+      isForPwD: true,
     },
     applicationProcess: [
       'Get disability certificate from medical board',
@@ -546,7 +551,7 @@ export const REAL_GOVT_SCHEMES: Scheme[] = [
       'Coverage for 8+ crore households'
     ],
     eligibility: {
-      category: 'EWS/BPL',
+      category: 'EWS',
     },
     applicationProcess: [
       'Verify eligibility through government database',
@@ -638,7 +643,422 @@ export const REAL_GOVT_SCHEMES: Scheme[] = [
       'OCI certificate issuance'
     ],
     applicationLink: 'https://ociservices.mea.gov.in/'
-  }
+  },
+
+  // Ministry of Women & Child Development
+  {
+    id: 'mission-shakti',
+    title: 'Mission Shakti',
+    department: 'Ministry of Women & Child Development',
+    description: 'Comprehensive scheme for safety, security and empowerment of women.',
+    category: 'Social Security',
+    benefits: [
+      'One Stop Centre for women in distress',
+      'Women Helpline (181)',
+      'Beti Bachao Beti Padhao',
+      'Skills training and employment',
+      'Legal aid and counselling'
+    ],
+    eligibility: {
+      gender: 'Female',
+    },
+    applicationProcess: [
+      'Call Women Helpline 181',
+      'Visit nearest One Stop Centre',
+      'Register complaint/requirement',
+      'Get immediate assistance',
+      'Follow-up support provided'
+    ],
+    applicationLink: 'https://wcd.nic.in/schemes/mission-shakti'
+  },
+
+  // Ministry of Agriculture - Crop Insurance
+  {
+    id: 'pm-fasal-bima',
+    title: 'Pradhan Mantri Fasal Bima Yojana (PMFBY)',
+    department: 'Ministry of Agriculture & Farmers Welfare',
+    description: 'Crop insurance scheme protecting farmers against crop loss due to natural calamities.',
+    category: 'Agriculture',
+    benefits: [
+      'Coverage for all crops',
+      'Protection against natural disasters',
+      'Low premium rates (1.5-5%)',
+      'Government subsidized insurance',
+      'Quick claim settlement'
+    ],
+    eligibility: {
+      residence: 'Rural',
+    },
+    applicationProcess: [
+      'Register during crop sowing season',
+      'Pay premium at bank/CSC',
+      'Report crop loss within 72 hours',
+      'Survey and assessment',
+      'Claim disbursement'
+    ],
+    applicationLink: 'https://pmfby.gov.in/'
+  },
+
+  // Ministry of Health - Maternal Health
+  {
+    id: 'janani-suraksha',
+    title: 'Janani Suraksha Yojana (JSY)',
+    department: 'Ministry of Health and Family Welfare',
+    description: 'Safe motherhood intervention scheme promoting institutional delivery.',
+    category: 'Healthcare',
+    benefits: [
+      'Cash assistance for institutional delivery',
+      '₹1,400 for rural areas',
+      '₹1,000 for urban areas',
+      'Free delivery services',
+      'Post-delivery care'
+    ],
+    eligibility: {
+      gender: 'Female',
+      category: 'SC',
+    },
+    applicationProcess: [
+      'Register pregnancy at health center',
+      'Get antenatal checkups',
+      'Deliver at government facility',
+      'Receive cash assistance',
+      'Post-natal care follow-up'
+    ],
+    applicationLink: 'https://nhm.gov.in/index1.php?lang=1&level=3&sublinkid=841&lid=309'
+  },
+
+  // Ministry of Railways
+  {
+    id: 'mera-ration-mera-adhikaar',
+    title: 'One Nation One Ration Card',
+    department: 'Ministry of Consumer Affairs',
+    description: 'Portability of ration card allowing beneficiaries to claim foodgrain anywhere in India.',
+    category: 'Food Security',
+    benefits: [
+      'Ration card portability',
+      'Access food grains anywhere',
+      'No need to transfer ration card',
+      'Biometric authentication',
+      'Real-time availability check'
+    ],
+    eligibility: {
+      category: 'EWS',
+    },
+    applicationProcess: [
+      'Link Aadhaar with ration card',
+      'Enable biometric authentication',
+      'Visit any PDS shop nationwide',
+      'Get authenticated',
+      'Receive entitled ration'
+    ],
+    applicationLink: 'https://impds.nic.in/ONORC/'
+  },
+
+  // Ministry of Textiles
+  {
+    id: 'pm-mitra-yojana',
+    title: 'PM MITRA (Mega Integrated Textile Region and Apparel) Parks',
+    department: 'Ministry of Textiles',
+    description: 'Scheme to establish textile manufacturing hubs creating employment opportunities.',
+    category: 'Employment',
+    benefits: [
+      'Skill development programs',
+      'Direct employment opportunities',
+      'Ancillary business support',
+      'Modern infrastructure facilities',
+      'Export facilitation'
+    ],
+    eligibility: {
+      minAge: 18,
+    },
+    applicationProcess: [
+      'Check for nearby MITRA park',
+      'Register at employment exchange',
+      'Undergo skill training',
+      'Get placement',
+      'Start working'
+    ],
+    applicationLink: 'https://texmin.nic.in/'
+  },
+
+  // Ministry of Culture
+  {
+    id: 'scholarship-young-artists',
+    title: 'Scholarship Scheme for Young Artists',
+    department: 'Ministry of Culture',
+    description: 'Financial assistance to young artists in various cultural fields.',
+    category: 'Education',
+    benefits: [
+      '₹5,000 monthly scholarship',
+      'Duration of 2 years',
+      'Coverage for music, dance, theatre, visual arts',
+      'Exposure to performances',
+      'Networking opportunities'
+    ],
+    eligibility: {
+      minAge: 18,
+      maxAge: 25,
+      isForStudents: true,
+    },
+    applicationProcess: [
+      'Apply through online portal',
+      'Submit portfolio/performance video',
+      'Attend audition/interview',
+      'Selection by expert committee',
+      'Scholarship disbursement'
+    ],
+    applicationLink: 'https://indiaculture.nic.in/'
+  },
+
+  // Ministry of Environment
+  {
+    id: 'national-clean-air-programme',
+    title: 'National Clean Air Programme (NCAP)',
+    department: 'Ministry of Environment, Forest and Climate Change',
+    description: 'Comprehensive plan for prevention, control and abatement of air pollution.',
+    category: 'Environment',
+    benefits: [
+      'City-specific action plans',
+      'Air quality monitoring',
+      'Public awareness programs',
+      'Green cover enhancement',
+      'Pollution control measures'
+    ],
+    eligibility: {
+      // Community based
+    },
+    applicationProcess: [
+      'Check city action plan',
+      'Participate in awareness programs',
+      'Report pollution violations',
+      'Adopt green practices',
+      'Monitor air quality'
+    ],
+    applicationLink: 'https://ncap.moef.gov.in/'
+  },
+
+  // Ministry of Tourism
+  {
+    id: 'swadesh-darshan',
+    title: 'Swadesh Darshan Scheme',
+    department: 'Ministry of Tourism',
+    description: 'Theme-based tourist circuit development promoting tourism and employment.',
+    category: 'Employment',
+    benefits: [
+      'Tourism infrastructure development',
+      'Local employment generation',
+      'Skill development for tourism',
+      'Cultural heritage preservation',
+      'Economic growth in tourist areas'
+    ],
+    eligibility: {
+      // Location based
+    },
+    applicationProcess: [
+      'Check developed tourist circuits',
+      'Register as tourism service provider',
+      'Get trained in hospitality',
+      'Start tourism business',
+      'Benefit from tourist influx'
+    ],
+    applicationLink: 'https://tourism.gov.in/'
+  },
+
+  // Ministry of Ayush
+  {
+    id: 'national-ayush-mission',
+    title: 'National AYUSH Mission',
+    department: 'Ministry of AYUSH',
+    description: 'Promoting AYUSH medical systems and providing accessible healthcare.',
+    category: 'Healthcare',
+    benefits: [
+      'Free AYUSH treatment',
+      'AYUSH hospitals and dispensaries',
+      'Medicinal plant cultivation support',
+      'Research and development',
+      'Integration with modern medicine'
+    ],
+    eligibility: {
+      // Universal coverage
+    },
+    applicationProcess: [
+      'Visit nearest AYUSH facility',
+      'Register as patient',
+      'Consultation with AYUSH doctor',
+      'Get treatment',
+      'Follow-up care'
+    ],
+    applicationLink: 'https://main.ayush.gov.in/'
+  },
+
+  // Ministry of Electronics & IT
+  {
+    id: 'digital-india',
+    title: 'Digital India Programme',
+    department: 'Ministry of Electronics & IT',
+    description: 'Transforming India into digitally empowered society and knowledge economy.',
+    category: 'Skill Development',
+    benefits: [
+      'Digital literacy training',
+      'Common Service Centers',
+      'E-governance services',
+      'Broadband connectivity',
+      'Mobile app ecosystem'
+    ],
+    eligibility: {
+      // Universal access
+    },
+    applicationProcess: [
+      'Visit CSC for digital services',
+      'Enroll in digital literacy program',
+      'Learn basic computer skills',
+      'Access e-services',
+      'Get digital certificate'
+    ],
+    applicationLink: 'https://www.digitalindia.gov.in/'
+  },
+
+  // Ministry of Shipping
+  {
+    id: 'sagarmala-programme',
+    title: 'Sagarmala Programme',
+    department: 'Ministry of Ports, Shipping and Waterways',
+    description: 'Port-led development promoting port modernization and coastal economic zones.',
+    category: 'Employment',
+    benefits: [
+      'Port infrastructure development',
+      'Direct and indirect employment',
+      'Skill development in maritime sector',
+      'Coastal community development',
+      'Trade facilitation'
+    ],
+    eligibility: {
+      // Coastal region residents
+    },
+    applicationProcess: [
+      'Check nearby port development projects',
+      'Register at employment exchange',
+      'Skill training in maritime sector',
+      'Get employment',
+      'Career growth opportunities'
+    ],
+    applicationLink: 'http://sagarmala.gov.in/'
+  },
+
+  // Ministry of Coal
+  {
+    id: 'pm-khanij-kshetra-kalyan-yojana',
+    title: 'Pradhan Mantri Khanij Kshetra Kalyan Yojana (PMKKKY)',
+    department: 'Ministry of Mines',
+    description: 'Welfare of areas and people affected by mining operations.',
+    category: 'Social Security',
+    benefits: [
+      'Physical infrastructure development',
+      'Health and education facilities',
+      'Skill development for affected people',
+      'Environmental restoration',
+      'Water supply and sanitation'
+    ],
+    eligibility: {
+      // Mining affected areas
+    },
+    applicationProcess: [
+      'District level plan formulation',
+      'Community participation',
+      'Project approval',
+      'Implementation',
+      'Monitoring and evaluation'
+    ],
+    applicationLink: 'https://mines.gov.in/'
+  },
+
+  // Ministry of Food Processing
+  {
+    id: 'pm-formalization-micro-food',
+    title: 'PM Formalisation of Micro Food Processing Enterprises (PMFME)',
+    department: 'Ministry of Food Processing Industries',
+    description: 'Support to micro food processing units for upgradation and formalization.',
+    category: 'Self-Employment',
+    benefits: [
+      'Credit-linked subsidy up to ₹10 lakhs',
+      'Capacity building and training',
+      'Marketing and branding support',
+      'Technology upgradation',
+      'Cluster-based approach'
+    ],
+    eligibility: {
+      // Existing or new food processing entrepreneurs
+    },
+    applicationProcess: [
+      'Prepare detailed project report',
+      'Apply through PMFME portal',
+      'Submit to District Industry Centre',
+      'Loan processing by bank',
+      'Subsidy disbursement'
+    ],
+    applicationLink: 'https://pmfme.mofpi.gov.in/'
+  },
+
+  // Ministry of Steel
+  {
+    id: 'skill-development-steel-sector',
+    title: 'Skill Development in Steel Sector',
+    department: 'Ministry of Steel',
+    description: 'Training and skill development for youth in steel and allied industries.',
+    category: 'Skill Development',
+    benefits: [
+      'Free technical training',
+      'Industry certification',
+      'Placement assistance',
+      'Stipend during training',
+      'Career advancement opportunities'
+    ],
+    eligibility: {
+      minAge: 18,
+      maxAge: 35,
+      isForStudents: true,
+    },
+    applicationProcess: [
+      'Apply through Sector Skill Council',
+      'Selection based on eligibility',
+      'Undergo training',
+      'Pass assessment',
+      'Get placed in steel sector'
+    ],
+    applicationLink: 'https://steel.gov.in/'
+  },
+
+  // Ministry of New and Renewable Energy
+  {
+    id: 'pm-kusum',
+    title: 'PM-KUSUM (Kisan Urja Suraksha evam Utthaan Mahabhiyan)',
+    department: 'Ministry of New and Renewable Energy',
+    description: 'Solar energy scheme for farmers to set up solar pumps and generate extra income.',
+    category: 'Agriculture',
+    benefits: [
+      'Solar pump installation subsidy',
+      'Grid-connected solar power plants',
+      'Solarization of existing pumps',
+      'Additional income from selling power',
+      'Reduced electricity bills'
+    ],
+    eligibility: {
+      residence: 'Rural',
+      // Farmers
+    },
+    applicationProcess: [
+      'Apply through state nodal agency',
+      'Submit land documents',
+      'Technical feasibility study',
+      'Approval and subsidy sanction',
+      'Installation and commissioning'
+    ],
+    applicationLink: 'https://pmkusum.mnre.gov.in/'
+  },
+
+  // Merge additional schemes
+  ...ADDITIONAL_SCHEMES,
+  ...MORE_SCHEMES
 ];
 
 export default REAL_GOVT_SCHEMES;

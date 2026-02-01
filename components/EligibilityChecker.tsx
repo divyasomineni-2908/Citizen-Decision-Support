@@ -4,14 +4,13 @@ import SchemeCard from './SchemeCard';
 import SchemeDetail from './SchemeDetail';
 import IneligibleSchemeCard from './IneligibleSchemeCard';
 import { getTranslator } from '../services/translations';
-import { MOCK_USER_PROFILE } from '../constants';
 import { UserIcon } from './Icons';
-// FIX: Import HowToApplyModal to handle 'how to apply' functionality.
 import HowToApplyModal from './HowToApplyModal';
 
 interface EligibilityCheckerProps {
   schemes: Scheme[];
   onToggleFavorite: (schemeId: string) => void;
+  userProfile: UserProfile;
   language: string;
 }
 
@@ -48,12 +47,11 @@ const checkSchemeEligibility = (scheme: Scheme, user: UserProfile): EligibilityC
     return { scheme, isEligible: failedCriteria.length === 0, failedCriteria };
 };
 
-const EligibilityChecker: React.FC<EligibilityCheckerProps> = ({ schemes, onToggleFavorite, language }) => {
+const EligibilityChecker: React.FC<EligibilityCheckerProps> = ({ schemes, onToggleFavorite, userProfile, language }) => {
   const t = getTranslator(language);
   const [selectedScheme, setSelectedScheme] = useState<Scheme | null>(null);
   // FIX: Add state to manage the 'How to Apply' modal visibility.
   const [schemeForHowToApply, setSchemeForHowToApply] = useState<Scheme | null>(null);
-  const userProfile = MOCK_USER_PROFILE;
 
   const eligibilityResults = useMemo(() => {
     return schemes.map(scheme => checkSchemeEligibility(scheme, userProfile));
@@ -82,7 +80,7 @@ const EligibilityChecker: React.FC<EligibilityCheckerProps> = ({ schemes, onTogg
             <UserIcon className="w-10 h-10 text-primary" />
         </div>
         <div>
-            <h2 className="text-xl font-bold text-dark">Citizen User's Profile</h2>
+            <h2 className="text-xl font-bold text-dark">{userProfile.name}'s Profile</h2>
             <div className="flex flex-wrap gap-x-6 gap-y-1 text-gray-600 mt-1 text-sm">
                 <span><strong>Age:</strong> {userProfile.age}</span>
                 <span><strong>Income:</strong> ₹{userProfile.annualIncome.toLocaleString()}</span>

@@ -1,7 +1,19 @@
 import { Scheme, Application, UserProfile } from './types';
 import REAL_GOVT_SCHEMES from './services/realSchemes';
 
+// Official Government Portal for Scheme Applications
+export const MYSCHEME_PORTAL_URL = 'https://www.myscheme.gov.in/search';
+
+// Update all schemes to use the official myscheme.gov.in portal
+const updateSchemesToMyScheme = (schemes: Scheme[]): Scheme[] => {
+  return schemes.map(scheme => ({
+    ...scheme,
+    applicationLink: MYSCHEME_PORTAL_URL
+  }));
+};
+
 export const MOCK_USER_PROFILE: UserProfile = {
+    name: 'Rajesh Kumar',
     gender: 'Male',
     age: 52,
     state: 'Maharashtra',
@@ -12,8 +24,8 @@ export const MOCK_USER_PROFILE: UserProfile = {
     isPwD: false,
 };
 
-// Using real Indian government schemes database with 30+ verified schemes
-export const MOCK_SCHEMES: Scheme[] = REAL_GOVT_SCHEMES;
+// Using real Indian government schemes database - all links redirect to official myscheme.gov.in portal
+export const MOCK_SCHEMES: Scheme[] = updateSchemesToMyScheme(REAL_GOVT_SCHEMES);
 
 const getTodayDateString = () => {
     const today = new Date();

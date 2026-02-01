@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import Home from './components/Home';
@@ -18,9 +18,10 @@ import VoiceAssistant from './components/VoiceAssistant';
 import TextToSpeech from './components/TextToSpeech';
 import NotificationCenter from './components/NotificationCenter';
 import { ChatIcon } from './components/Icons';
-import { View, Scheme } from './types';
-import { MOCK_SCHEMES, MOCK_APPLICATIONS } from './constants';
-import { languages } from './services/translations';
+import { View, Scheme, UserProfile } from './types';
+import { MOCK_SCHEMES, MOCK_APPLICATIONS, MOCK_USER_PROFILE } from './constants';
+import { getTranslator, languages, translations } from './services/translations';
+import { translateText } from './services/geminiService';
 
 const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<View>(View.HOME);
@@ -30,6 +31,9 @@ const App: React.FC = () => {
   const [schemes, setSchemes] = useState<Scheme[]>(
     MOCK_SCHEMES.map(scheme => ({ ...scheme, isFavorite: false }))
   );
+  const [translatedSchemes, setTranslatedSchemes] = useState<Scheme[]>(schemes);
+  const translationCacheRef = useRef<Record<string, Record<string, Partial<Scheme>>>>({});
+  const [userProfile, setUserProfile] = useState<UserProfile>(MOCK_USER_PROFILE);
 
   const handleToggleFavorite = (schemeId: string) => {
     setSchemes(prevSchemes =>
@@ -39,16 +43,102 @@ const App: React.FC = () => {
     );
   };
 
+  useEffect(() => {
+    let isMounted = true;
+
+    const translateAllSchemes = async () => {
+      if (language === 'English') {
+        setTranslatedSchemes(schemes);
+        return;
+      }
+
+      const translator = getTranslator(language);
+      const cacheForLanguage = translationCacheRef.current[language] || {};
+      translationCacheRef.current[language] = cacheForLanguage;
+
+      const translatedList = await Promise.all(
+        schemes.map(async (scheme) => {
+          const cached = cacheForLanguage[scheme.id];
+          if (cached) {
+            return { ...scheme, ...cached };
+          }
+
+          const translationEntry = translations[scheme.id as keyof typeof translations] as
+            | Record<string, string>
+            | undefined;
+          const hasLanguageTitle = Boolean(translationEntry && translationEntry[language]);
+          const titleFromTranslations = hasLanguageTitle ? translationEntry![language] : scheme.title;
+          const shouldTranslateTitle = !hasLanguageTitle;
+
+          const targets: Array<{ field: 'title' | 'description' | 'category' | 'department'; value: string }> = [];
+          if (shouldTranslateTitle) {
+            targets.push({ field: 'title', value: scheme.title });
+          }
+          targets.push(
+            { field: 'description', value: scheme.description },
+            { field: 'category', value: scheme.category },
+            { field: 'department', value: scheme.department }
+          );
+
+          const [fieldsResult, benefitsResult, processResult] = await Promise.allSettled([
+            translateText(targets.map(target => target.value), language) as Promise<string[]>,
+            translateText(scheme.benefits, language) as Promise<string[]>,
+            translateText(scheme.applicationProcess, language) as Promise<string[]>,
+          ]);
+
+          const translatedFields = fieldsResult.status === 'fulfilled'
+            ? fieldsResult.value
+            : targets.map(target => target.value);
+          const translatedBenefits = benefitsResult.status === 'fulfilled'
+            ? benefitsResult.value
+            : scheme.benefits;
+          const translatedProcess = processResult.status === 'fulfilled'
+            ? processResult.value
+            : scheme.applicationProcess;
+
+          const mappedFields = targets.reduce<Record<string, string>>((acc, target, index) => {
+            acc[target.field] = translatedFields[index] ?? target.value;
+            return acc;
+          }, {});
+
+          const translatedScheme: Partial<Scheme> = {
+            title: shouldTranslateTitle ? (mappedFields.title ?? scheme.title) : titleFromTranslations,
+            description: mappedFields.description ?? scheme.description,
+            category: mappedFields.category ?? scheme.category,
+            department: mappedFields.department ?? scheme.department,
+            benefits: translatedBenefits,
+            applicationProcess: translatedProcess,
+          };
+
+          cacheForLanguage[scheme.id] = translatedScheme;
+          return { ...scheme, ...translatedScheme };
+        })
+      );
+
+      if (isMounted) {
+        setTranslatedSchemes(translatedList);
+      }
+    };
+
+    translateAllSchemes();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [language, schemes]);
+
+  const schemesToRender = language === 'English' ? schemes : translatedSchemes;
+
   const renderView = useCallback(() => {
     switch (currentView) {
       case View.HOME:
         return <Home setCurrentView={setCurrentView} language={language} />;
       case View.SCHEMES:
-        return <SchemeDirectory schemes={schemes} onToggleFavorite={handleToggleFavorite} language={language} />;
+        return <SchemeDirectory schemes={schemesToRender} onToggleFavorite={handleToggleFavorite} language={language} />;
       case View.ELIGIBILITY:
-        return <EligibilityChecker schemes={schemes} onToggleFavorite={handleToggleFavorite} language={language} />;
+        return <EligibilityChecker schemes={schemesToRender} onToggleFavorite={handleToggleFavorite} userProfile={userProfile} language={language} />;
       case View.PROFILE:
-        return <Profile schemes={schemes} onToggleFavorite={handleToggleFavorite} language={language} />;
+        return <Profile schemes={schemesToRender} onToggleFavorite={handleToggleFavorite} userProfile={userProfile} onUpdateProfile={setUserProfile} language={language} />;
        case View.TRANSPARENCY:
         return <Transparency language={language}/>;
       case View.GRIEVANCE:
@@ -58,9 +148,9 @@ const App: React.FC = () => {
       case View.TRACKING:
         return <ApplicationStatusTracking language={language}/>;
       case View.COMPARISON:
-        return <SchemeComparison schemes={schemes} language={language}/>;
+        return <SchemeComparison schemes={schemesToRender} language={language}/>;
       case View.ANALYTICS:
-        return <AnalyticsDashboard schemes={schemes} language={language}/>;
+        return <AnalyticsDashboard schemes={schemesToRender} language={language}/>;
       case View.FAQ:
         return <FAQSection language={language}/>;
       case View.TUTORIALS:
@@ -68,7 +158,7 @@ const App: React.FC = () => {
       default:
         return <Home setCurrentView={setCurrentView} language={language} />;
     }
-  }, [currentView, schemes, language, darkMode]);
+  }, [currentView, schemes, schemesToRender, language, darkMode, userProfile]);
 
   return (
     <div className={`min-h-screen font-sans flex flex-col ${darkMode ? 'bg-gray-900 text-gray-100' : 'bg-gray-50 text-dark'}`}>

@@ -44,6 +44,12 @@ const SchemeDirectory: React.FC<SchemeDirectoryProps> = ({ schemes, onToggleFavo
 
     const categories = useMemo(() => [...new Set(schemes.map(s => s.category))].sort(), [schemes]);
     const departments = useMemo(() => [...new Set(schemes.map(s => s.department))].sort(), [schemes]);
+
+    useEffect(() => {
+        setSelectedCategory('');
+        setSelectedDepartment('');
+        setCurrentPage(1);
+    }, [language]);
     
     const handleEligibilityChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value, type } = e.target;
@@ -176,7 +182,9 @@ const SchemeDirectory: React.FC<SchemeDirectoryProps> = ({ schemes, onToggleFavo
                         aria-label="Filter by category"
                     >
                         <option value="">{t('allCategories')}</option>
-                        {categories.map(c => <option key={c} value={c}>{c}</option>)}
+                        {categories.map(c => (
+                            <option key={c} value={c}>{c}</option>
+                        ))}
                     </select>
                     <select 
                         value={selectedDepartment}
@@ -185,7 +193,9 @@ const SchemeDirectory: React.FC<SchemeDirectoryProps> = ({ schemes, onToggleFavo
                         aria-label="Filter by department"
                     >
                         <option value="">{t('allDepartments')}</option>
-                        {departments.map(d => <option key={d} value={d}>{d}</option>)}
+                        {departments.map(d => (
+                            <option key={d} value={d}>{d}</option>
+                        ))}
                     </select>
                 </div>
 

@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Scheme, SimplifiedScheme } from '../types';
-import { simplifySchemeDetails, translateText } from '../services/geminiService';
+import { simplifySchemeDetails } from '../services/geminiService';
 import { getTranslator } from '../services/translations';
 import { CloseIcon, CheckCircleIcon, SparklesIcon } from './Icons';
 import HowToApplyModal from './HowToApplyModal';
@@ -11,11 +11,6 @@ interface SchemeDetailProps {
   language: string;
 }
 
-interface TranslatedContent {
-    description: string;
-    benefits: string[];
-}
-
 const SchemeDetail: React.FC<SchemeDetailProps> = ({ scheme, onClose, language }) => {
   const t = getTranslator(language);
   const [isSimplified, setIsSimplified] = useState(false);
@@ -23,52 +18,13 @@ const SchemeDetail: React.FC<SchemeDetailProps> = ({ scheme, onClose, language }
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const [translatedContent, setTranslatedContent] = useState<TranslatedContent | null>(null);
-  const [isTranslating, setIsTranslating] = useState(false);
-  const [translationError, setTranslationError] = useState<string | null>(null);
-  const translationCache = useRef<{ [key: string]: TranslatedContent }>({});
-
   const [isHowToApplyOpen, setIsHowToApplyOpen] = useState(false);
 
   useEffect(() => {
-    // Reset simplification when language changes to avoid confusion
     if (language !== 'English') {
         setIsSimplified(false);
     }
-    
-    const translateSchemeContent = async () => {
-        if (language === 'English') {
-            setTranslatedContent(null);
-            return;
-        }
-
-        const cacheKey = `${scheme.id}-${language}`;
-        if (translationCache.current[cacheKey]) {
-            setTranslatedContent(translationCache.current[cacheKey]);
-            return;
-        }
-
-        setIsTranslating(true);
-        setTranslationError(null);
-        try {
-            const [description, benefits] = await Promise.all([
-                translateText(scheme.description, language) as Promise<string>,
-                translateText(scheme.benefits, language) as Promise<string[]>,
-            ]);
-            
-            const content = { description, benefits };
-            translationCache.current[cacheKey] = content;
-            setTranslatedContent(content);
-
-        } catch (err) {
-            setTranslationError(`Could not translate content to ${language}.`);
-        } finally {
-            setIsTranslating(false);
-        }
-    };
-
-    translateSchemeContent();
-  }, [scheme, language]);
+  }, [language]);
 
   const handleToggleSimplify = async () => {
     if (isSimplified) {
@@ -96,18 +52,20 @@ const SchemeDetail: React.FC<SchemeDetailProps> = ({ scheme, onClose, language }
 
   const descriptionToShow = isSimplified && simplifiedContent 
     ? simplifiedContent.description 
-    : (language !== 'English' && translatedContent ? translatedContent.description : scheme.description);
+    : scheme.description;
   
   const benefitsToShow = isSimplified && simplifiedContent
     ? simplifiedContent.benefits
-    : (language !== 'English' && translatedContent ? translatedContent.benefits : scheme.benefits);
+    : scheme.benefits;
+
+  const titleToShow = scheme.title;
 
   return (
     <>
       <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center p-4">
         <div className="bg-white rounded-lg shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto animate-fade-in-up">
           <div className="sticky top-0 bg-white p-6 border-b border-gray-200 flex justify-between items-start gap-4">
-            <h2 className="text-2xl font-bold text-primary">{t(scheme.id)}</h2>
+            <h2 className="text-2xl font-bold text-primary">{titleToShow}</h2>
             <div className="flex items-center flex-shrink-0 gap-2 sm:gap-4">
               <button
                   onClick={handleToggleSimplify}
@@ -130,15 +88,9 @@ const SchemeDetail: React.FC<SchemeDetailProps> = ({ scheme, onClose, language }
                 <p>{error}</p>
               </div>
             )}
-            {translationError && (
-              <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4" role="alert">
-                <p className="font-bold">Translation Notice</p>
-                <p>{translationError} Showing original content instead.</p>
-              </div>
-            )}
             <div>
               <h3 className="font-semibold text-lg text-dark">{t('description')}</h3>
-              {isLoading || isTranslating ? (
+              {isLoading ? (
                   <div className="mt-2 space-y-2">
                       <div className="h-4 bg-gray-200 rounded animate-pulse w-full"></div>
                       <div className="h-4 bg-gray-200 rounded animate-pulse w-5/6"></div>
@@ -151,7 +103,7 @@ const SchemeDetail: React.FC<SchemeDetailProps> = ({ scheme, onClose, language }
             </div>
             <div>
               <h3 className="font-semibold text-lg text-dark">{t('keyBenefits')}</h3>
-              {isLoading || isTranslating ? (
+                {isLoading ? (
                   <div className="mt-2 space-y-2">
                       <div className="h-4 bg-gray-200 rounded animate-pulse w-full"></div>
                       <div className="h-4 bg-gray-200 rounded animate-pulse w-4/6"></div>
@@ -187,21 +139,32 @@ const SchemeDetail: React.FC<SchemeDetailProps> = ({ scheme, onClose, language }
               )}
             </div>
           </div>
-          <div className="sticky bottom-0 bg-gray-50 p-4 border-t border-gray-200 flex justify-end gap-4">
-             <button
-                onClick={() => setIsHowToApplyOpen(true)}
-                className="bg-blue-100 text-primary font-bold py-2 px-6 rounded-md hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors"
-             >
-                {t('howToApply')}
-             </button>
-            <a
-              href={scheme.applicationLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-secondary text-white font-bold py-2 px-6 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-secondary transition-colors"
-            >
-              {t('applyNow')}
-            </a>
+          <div className="sticky bottom-0 bg-gray-50 p-4 border-t border-gray-200">
+             <div className="mb-3 text-center text-sm text-gray-600">
+               <p className="flex items-center justify-center gap-2">
+                 <span className="text-green-600">🌐</span>
+                 <span>Apply through official Government portal: <strong>myscheme.gov.in</strong></span>
+               </p>
+             </div>
+             <div className="flex justify-end gap-4">
+               <button
+                  onClick={() => setIsHowToApplyOpen(true)}
+                  className="bg-blue-100 text-primary font-bold py-2 px-6 rounded-md hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors"
+               >
+                  {t('howToApply')}
+               </button>
+              <a
+                href={scheme.applicationLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-secondary text-white font-bold py-2 px-6 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-secondary transition-colors inline-flex items-center gap-2"
+              >
+                {t('applyNow')}
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+              </a>
+             </div>
           </div>
         </div>
       </div>
